@@ -322,7 +322,7 @@ public class PhysicsSampleFrame extends GameFrame
 							    y = ball.p_y - balls[i].p_y;
 							    // 상대 공에서 본 내공의 각도.
 //							    theta = Math.atan2(y,x);
-							    
+							   // 
 							    // 공을 이동시켜 버리기.
 							    ball.p_x = Math.cos(theta)*(ball_width/2*1.001) + (balls[i].p_x+ball.p_x)/2;
 							    ball.p_y = Math.sin(theta)*(ball_width/2*1.001) + (balls[i].p_y+ball.p_y)/2;
