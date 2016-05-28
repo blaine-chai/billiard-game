@@ -91,14 +91,6 @@ public class PhysicsSampleFrame extends GameFrame {
 
         @Override
         public String toString() {
-/*            System.out.println("p_x : " + p_x);
-            System.out.println("p_y : " + p_y);
-            System.out.println("v_x : " + v_x);
-            System.out.println("v_y : " + v_y);
-            System.out.println("a_y : " + a_y);
-            System.out.println("a_y : " + a_y);
-            System.out.println("x : " + x);
-            System.out.println("y : " + y);*/
             return "p_x : " + p_x + "\n" + "p_y : " + p_y + "\n" + "v_x : " + v_x + "\n" + "v_y : " + v_y + "\n" + "a_y : " + a_y + "\n" + "a_y : " + a_y + "\n" + "x : " + x + "\n" + "y : " + y;
         }
     }
@@ -149,7 +141,9 @@ public class PhysicsSampleFrame extends GameFrame {
 //        balls[1] = new RedBall(rand.nextInt(settings.canvas_width - ball_width - 2) + 1, rand.nextInt(settings.canvas_height - ball_height - 2) + 1);
 
         //각 공을 랜덤 위치에 배치
-        for (int iBall = 0; iBall < balls.length; ++iBall)
+
+        balls[0] = new RedBall(rand.nextInt(settings.canvas_width - ball_width - 2) + 1, rand.nextInt(settings.canvas_height - ball_height - 2) + 1);
+        for (int iBall = 1; iBall < balls.length; ++iBall)
             balls[iBall] = new Ball(rand.nextInt(settings.canvas_width - ball_width - 2) + 1, rand.nextInt(settings.canvas_height - ball_height - 2) + 1);
 
         //FPS 출력에 사용할 색 및 글자체 가져오기
@@ -300,80 +294,6 @@ public class PhysicsSampleFrame extends GameFrame {
 
                 do {
                     isWithinCanvas = true;
-                    /*try {
-                        for (int i = 0; i < balls.length; i++) {
-                            if (ball.p_x == balls[i].p_x && ball.p_y == balls[i].p_y) {
-
-                            }
-                            if ((ball.p_x - balls[i].p_x) * (ball.p_x - balls[i].p_x) + (ball.p_y - balls[i].p_y) * (ball.p_y - balls[i].p_y) < 900 && ball != balls[i]) {
-//								ball.v_x = -ball.v_x;
-//								ball.p_x = 10;
-//								//balls[i].p_x = -balls[i].p_x;
-//								balls[i].v_x = - balls[i].v_x;
-//								ball.v_y = -ball.v_y;
-//								balls[i].v_y = - balls[i].v_y;
-                                System.out.println(i);
-//								isWithinCanvas = false;
-//								System.out.println(ball.v_x);
-//								System.out.println(ball.v_y);
-//								System.out.println(ball.p_x);
-//								System.out.println(ball.p_y);
-//								System.out.println(balls[i].v_x);
-//								System.out.println(balls[i].v_y);
-//								System.out.println(balls[i].p_x);
-//								System.out.println(balls[i].p_y);
-                                // 상대 속도 구하기
-                                double vx = ball.v_x - balls[i].v_x;
-                                double vy = ball.v_y - balls[i].v_y;
-//							    if(vx==0&&vy==0) return;
-
-                                // 현재 공의 상대 진행 각도.
-                                double alpha = Math.atan2(vy, vx);
-
-                                // 공의 상대 진행 방향에 대한 상대공의 각도 구하기.
-                                double x = balls[i].p_x - ball.p_x;
-                                double y = balls[i].p_y - ball.p_y;
-                                double theta = Math.atan2(y, x) - alpha;
-
-                                // 충돌후 현재 공의 회전. (상대적..)
-//							    alpha = alpha - (M_PI_2-theta);
-
-                                // 상대적 진행 속도.
-                                double v = Math.sqrt(vx * vx + vy * vy);
-
-                                // 충돌후 상대적 진행 속도.
-                                v = v * Math.sin(theta);
-
-                                // 상대적 진행 속도
-                                vx = v * Math.cos(alpha);
-                                vy = v * Math.sin(alpha);
-
-                                // 절대적 진행 속도.
-                                vx = vx + balls[i].v_x;
-                                vy = vy + balls[i].v_y;
-
-                                // 멤버 변수에 반영.
-                                ball.v_x = -vx;
-                                ball.v_y = -vy;
-
-
-                                //현재 공을 충돌 한 공에서 떨어뜨리기.
-                                x = ball.p_x - balls[i].p_x;
-                                y = ball.p_y - balls[i].p_y;
-                                // 상대 공에서 본 내공의 각도.
-//							    theta = Math.atan2(y,x);
-                                //
-                                // 공을 이동시켜 버리기.
-                                ball.p_x = Math.cos(theta) * (ball_width / 2 * 1.001) + (balls[i].p_x + ball.p_x) / 2;
-                                ball.p_y = Math.sin(theta) * (ball_width / 2 * 1.001) + (balls[i].p_y + ball.p_y) / 2;
-                            }
-                        }
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }*/
-                    //반사가 발생할 때마다 속도 반전, 위치 수정
-//					System.out.println("hi");
-
                     if (ball.p_x < 0) {
                         ball.v_x = -ball.v_x;
                         ball.p_x = -ball.p_x;
