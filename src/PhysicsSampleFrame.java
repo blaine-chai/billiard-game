@@ -77,14 +77,12 @@ public class PhysicsSampleFrame extends GameFrame {
 
         public Ball(int x, int y) {
             super(x, y, ball_width, ball_height, images.GetImage("ball"));
-
             p_x = x;
             p_y = y;
         }
 
         public Ball(int x, int y, String imageName) {
             super(x, y, ball_width, ball_height, images.GetImage(imageName));
-
             p_x = x;
             p_y = y;
         }
@@ -136,12 +134,6 @@ public class PhysicsSampleFrame extends GameFrame {
         Random rand = new Random();
 
         //각 공을 랜덤 위치에 배치
-//        for (int iBall = 0; iBall < balls.length; ++iBall)
-//        balls[0] = new Ball(rand.nextInt(settings.canvas_width - ball_width - 2) + 1, rand.nextInt(settings.canvas_height - ball_height - 2) + 1);
-//        balls[1] = new RedBall(rand.nextInt(settings.canvas_width - ball_width - 2) + 1, rand.nextInt(settings.canvas_height - ball_height - 2) + 1);
-
-        //각 공을 랜덤 위치에 배치
-
         balls[0] = new RedBall(rand.nextInt(settings.canvas_width - ball_width - 2) + 1, rand.nextInt(settings.canvas_height - ball_height - 2) + 1);
         for (int iBall = 1; iBall < balls.length; ++iBall)
             balls[iBall] = new Ball(rand.nextInt(settings.canvas_width - ball_width - 2) + 1, rand.nextInt(settings.canvas_height - ball_height - 2) + 1);
@@ -210,14 +202,15 @@ public class PhysicsSampleFrame extends GameFrame {
         double interval = timeStamp - timeStamp_lastFrame;
 
         //모든 공에 대해
-        for (Ball ball : balls) {
-            ball.a_x = 0;
-            ball.a_y = 0;
+
+        for (int i = 0; i < balls.length; i++) {
+            balls[i].a_x = 0;
+            balls[i].a_y = 0;
 
             //이번 프레임에 스페이스 바를 눌렀다면 속도를 0으로 만듦
             if (isStopRequested == true) {
-                ball.v_x = 0;
-                ball.v_y = 0;
+                balls[i].v_x = 0;
+                balls[i].v_y = 0;
             }
 
             //마우스 버튼을 누르고 있다면 인력 적용
@@ -234,18 +227,24 @@ public class PhysicsSampleFrame extends GameFrame {
                 ball.a_y = gravitation * displacement_y / Math.sqrt(squaredDistance);
             }*/
 
-            //마우스 버튼을 누르고 있다면 인력 적용
-            if (isRepulsionRequested == true && ball.equals(balls[0])) {
-                double displacement_x = inputs.pos_mouseCursor.x - ball.p_x - ball_width / 2;
-                double displacement_y = inputs.pos_mouseCursor.y - ball.p_y - ball_height / 2;
+            //마우스 버튼을 뗄때 힘 적용
+            if (isRepulsionRequested == true && balls[i].equals(balls[0])) {
+                double displacement_x = inputs.pos_mouseCursor.x - balls[i].p_x - ball_width / 2;
+                double displacement_y = inputs.pos_mouseCursor.y - balls[i].p_y - ball_height / 2;
                 double squaredDistance = displacement_x * displacement_x + displacement_y * displacement_y;
                 double gravitation = coef_gravitation * interval / squaredDistance;
+
+                balls[i].collideWith = COLLIDE_WITH_INIT;
 
                 if (gravitation > max_gravitation)
                     gravitation = max_gravitation;
 
-                ball.a_x = gravitation * displacement_x / Math.sqrt(squaredDistance);
-                ball.a_y = gravitation * displacement_y / Math.sqrt(squaredDistance);
+//                ball.a_x = gravitation * displacement_x / Math.sqrt(squaredDistance);
+                balls[i].a_x = displacement_x / 200;
+//                ball.a_y = gravitation * displacement_y / Math.sqrt(squaredDistance);
+                balls[i].a_y = displacement_y / 200;
+
+                System.out.println(balls[i].a_x + "," + balls[i].a_y);
             }
 
 
@@ -268,20 +267,20 @@ public class PhysicsSampleFrame extends GameFrame {
             //컨트롤 키가 눌려 있지 않다면 속도 / 가속도 반영
             if (isPauseRequested == false) {
                 //마찰력 계산
-                ball.a_x += coef_friction * interval * ball.v_x;
-                ball.a_y += coef_friction * interval * ball.v_y;
+                balls[i].a_x += coef_friction * interval * balls[i].v_x;
+                balls[i].a_y += coef_friction * interval * balls[i].v_y;
 
                 //가속도를 속도에 적용 - 가속도의 경우 미리 시간을 곱했으므로 여기서 더 곱하지는 않음
-                ball.v_x += ball.a_x;
-                ball.v_y += ball.a_y;
+                balls[i].v_x += balls[i].a_x;
+                balls[i].v_y += balls[i].a_y;
 
                 //이 예제에서는 창 가장자리에 부딪히면 반사하므로 속도의 절대값이 특정 값보다 작아지도록 보정
-                ball.v_x %= max_velocity_x;
-                ball.v_y %= max_velocity_y;
+                balls[i].v_x %= max_velocity_x;
+                balls[i].v_y %= max_velocity_y;
 
                 //속도를 위치에 적용 - 이 때는 시간을 곱하여 적용
-                ball.p_x += ball.v_x * interval;
-                ball.p_y += ball.v_y * interval;
+                balls[i].p_x += balls[i].v_x * interval;
+                balls[i].p_y += balls[i].v_y * interval;
 
 				/*
                  * 반사 체크
@@ -294,32 +293,32 @@ public class PhysicsSampleFrame extends GameFrame {
 
                 do {
                     isWithinCanvas = true;
-                    if (ball.p_x < 0) {
-                        ball.v_x = -ball.v_x;
-                        ball.p_x = -ball.p_x;
+                    if (balls[i].p_x < 0) {
+                        balls[i].v_x = -balls[i].v_x;
+                        balls[i].p_x = -balls[i].p_x;
                         isWithinCanvas = false;
-                        ball.collideWith = numberOfBalls;
+                        balls[i].collideWith = numberOfBalls;
                     }
 
-                    if (ball.p_x >= settings.canvas_width - ball_width) {
-                        ball.v_x = -ball.v_x;
-                        ball.p_x = 2 * (settings.canvas_width - ball_width) - ball.p_x;
+                    if (balls[i].p_x >= settings.canvas_width - ball_width) {
+                        balls[i].v_x = -balls[i].v_x;
+                        balls[i].p_x = 2 * (settings.canvas_width - ball_width) - balls[i].p_x;
                         isWithinCanvas = false;
-                        ball.collideWith = numberOfBalls + 1;
+                        balls[i].collideWith = numberOfBalls + 1;
                     }
 
-                    if (ball.p_y < 0) {
-                        ball.v_y = -ball.v_y;
-                        ball.p_y = -ball.p_y;
+                    if (balls[i].p_y < 0) {
+                        balls[i].v_y = -balls[i].v_y;
+                        balls[i].p_y = -balls[i].p_y;
                         isWithinCanvas = false;
-                        ball.collideWith = numberOfBalls + 2;
+                        balls[i].collideWith = numberOfBalls + 2;
                     }
 
-                    if (ball.p_y >= settings.canvas_height - ball_height) {
-                        ball.v_y = -ball.v_y;
-                        ball.p_y = 2 * (settings.canvas_height - ball_height) - ball.p_y;
+                    if (balls[i].p_y >= settings.canvas_height - ball_height) {
+                        balls[i].v_y = -balls[i].v_y;
+                        balls[i].p_y = 2 * (settings.canvas_height - ball_height) - balls[i].p_y;
                         isWithinCanvas = false;
-                        ball.collideWith = numberOfBalls + 3;
+                        balls[i].collideWith = numberOfBalls + 3;
                     }
                 }
                 while (isWithinCanvas == false);
@@ -327,24 +326,20 @@ public class PhysicsSampleFrame extends GameFrame {
                 //마지막으로, 공의 위치를 기반으로 해당 공을 그릴 픽셀값 설정
 //                ball.x = (int) ball.p_x;
 //                ball.y = (int) ball.p_y;
-            }
-        }
 
-        for (int i = 0; i < balls.length; i++) {
-            for (int j = i + 1; j < balls.length; j++) {
-                if (calcCollision(balls[i], balls[j])
-                        && (balls[i].collideWith != j
-                        || balls[j].collideWith != i)) {
-                    balls[i].collideWith = j;
-                    balls[j].collideWith = i;
-                    System.out.println(i + "," + j);
-                    fixOverlap(balls[i], balls[j], interval);
+                for (int j = i + 1; j < balls.length; j++) {
+                    if (calcCollision(balls[i], balls[j])
+                            && (balls[i].collideWith != j || balls[j].collideWith != i)) {
+                        balls[i].collideWith = j;
+                        balls[j].collideWith = i;
+                        System.out.println(i + "," + j);
+                        fixOverlap(balls[i], balls[j], interval);
+                    }
                 }
+
+                balls[i].x = (int) balls[i].p_x;
+                balls[i].y = (int) balls[i].p_y;
             }
-        }
-        for (Ball ball : balls) {
-            ball.x = (int) ball.p_x;
-            ball.y = (int) ball.p_y;
         }
         //이번이 첫 프레임이었다면 시작 시각 기록
         if (timeStamp_firstFrame == 0)
@@ -402,10 +397,10 @@ public class PhysicsSampleFrame extends GameFrame {
             t = root2;
         }
 
-        System.out.println(i);
-        System.out.println(j);
-        System.out.println(t);
-        System.out.println(interval);
+//        System.out.println(i);
+//        System.out.println(j);
+//        System.out.println(t);
+//        System.out.println(interval);
 
         double ip_x = i.p_x + t * i.v_x;
         double ip_y = i.p_y + t * i.v_y;
@@ -416,8 +411,6 @@ public class PhysicsSampleFrame extends GameFrame {
         dy = ip_y - jp_y;
 
         double d2 = dx * dx + dy * dy;
-//        if (d2 < ball_width * ball_width) {
-//            if (i.v_x > 0.01) {
         double kii, kji, kij, kjj;
         kji = (dx * i.v_x + dy * i.v_y) / d2; // k of j due to i
         kii = (dx * i.v_y - dy * i.v_x) / d2; // k of i due to i
