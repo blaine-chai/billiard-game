@@ -12,50 +12,52 @@ public class Program
 		if ( mode == 0 )
 		{
 			GameFrameSettings settings = new GameFrameSettings();
-			settings.window_title = "LOOTå ì™ì˜™ å ì™ì˜™å ì™ì˜™å ï¿½ å ì™ì˜™å ì™ì˜™ å ì™ì˜™å ì™ì˜™";
+			settings.window_title = "LOOT¸¦ »ç¿ëÇÑ ¹°¸® ¿¹Á¦";
 			settings.canvas_width = 800;
 			settings.canvas_height = 600;
-			
-			//settings.gameLoop_interval_ns = 10000000;		//100FPSå ì™ì˜™ å ìŒ”ëŒì˜™ - å ì‹±ëªŒì˜™ å ì™ì˜™í‹¸ å ì™ì˜™ å ìŒëŒì˜™ å ì™ì˜™í“¨å ì‹¶ëŒì˜™ å ìŒ“ëªŒì˜™ å ì™ì˜™å ì™ì˜™ å ì™ì˜™å ì™ì˜™å ìŒ“ëŒì˜™ å ì™ì˜™å ì™ì˜™ å ì™ì˜™å ì™ì˜™ FPSå ì™ì˜™ å ì‹±ë¸ì˜™å ì™ì˜™ å ì™ì˜™å ì™ì˜™å ì™ì˜™å ì™ì˜™ å ì™ì˜™
-			settings.gameLoop_interval_ns = 16666666;		//å ì™ì˜™ 60FPSå ì™ì˜™ å ìŒ”ëŒì˜™
-			//settings.gameLoop_interval_ns = 100000000;	//10FPSå ì™ì˜™ å ìŒ”ëŒì˜™ - í™”å ì™ì˜™å ì™ì˜™ å ì‹­ëŒì˜™ 10å ì™ì˜™å ìŒœìš¸ì˜™ å ì™ì˜™å ì‹ ë“¸ì˜™å ì™ì˜™ å ì™ì˜™å ì™ì˜™å ì™ì˜™ å ì™ì˜™å ì™ì˜™å ì‹ ëªŒì˜™å ìŠ¹ê³¤ì˜™ å ì™ì˜™å ì™ì˜™ å ì™ì˜™å ì™ì˜™
-			
+
+//			settings.gameLoop_interval_ns = 10000000;		//100FPS¿¡ ÇØ´ç - ÀÌ¸¦ ¹öÆ¿ ¼ö ÀÖ´Â ÄÄÇ»ÅÍ´Â ±×¸® ¸¹Áö ¾ÊÀ»Å×´Ï º¸Åë ½ÇÁ¦ FPS´Â ÀÌº¸´Ù ¶³¾îÁö°Ô µÊ
+//			settings.gameLoop_interval_ns = 1000000;		//100FPS¿¡ ÇØ´ç - ÀÌ¸¦ ¹öÆ¿ ¼ö ÀÖ´Â ÄÄÇ»ÅÍ´Â ±×¸® ¸¹Áö ¾ÊÀ»Å×´Ï º¸Åë ½ÇÁ¦ FPS´Â ÀÌº¸´Ù ¶³¾îÁö°Ô µÊ
+			settings.gameLoop_interval_ns = 16666666;		//¾à 60FPS¿¡ ÇØ´ç
+			//settings.gameLoop_interval_ns = 100000000;	//10FPS¿¡ ÇØ´ç - È­¸éÀÌ ÃÊ´ç 10¹ø¹Û¿¡ °»½ÅµÇÁö ¾ÊÀ¸¸é ¹ö¹÷°Å¸®´Â°Ô ´«¿¡ º¸ÀÓ
+
 			settings.gameLoop_use_virtualTimingMode = false;
 			settings.numberOfButtons = 3;
-			
+
 			GameFrame window = new PhysicsSampleFrame(settings);
 			window.setVisible(true);
-		}	
+		}
+
 		if ( mode == 1 )
 		{
 			GameFrameSettings settings = new GameFrameSettings();
-			settings.window_title = "LOOTå ì™ì˜™ å ì™ì˜™å ì™ì˜™å ï¿½ å ìŒ‰ë¤„ì˜™ å ì™ì˜™å ì™ì˜™";
+			settings.window_title = "LOOT¸¦ »ç¿ëÇÑ ÀÔ·Â ¿¹Á¦";
 			settings.canvas_width = 400;
 			settings.canvas_height = 600;
-			
-			//settings.gameLoop_interval_ns = 10000000;		//100FPSå ì™ì˜™ å ìŒ”ëŒì˜™ - 'å ì™ì˜™å ì‹œìš¸ì˜™ í‚¤å ì™ì˜™ å ìŒ‰ë¤„ì˜™'å ì‹¹ëŒì˜™ å ì™ì˜™í™©å ì™ì˜™ å ì™ì˜™å ì™ì˜™å ì™ì˜™å ì™ì˜™å ï¿½ å ì™ì˜™å ì™ì˜™ å ì™ì˜™å ì™ì˜™å ï¿½
-			settings.gameLoop_interval_ns = 16666666;		//å ì™ì˜™ 60FPSå ì™ì˜™ å ìŒ”ëŒì˜™
-			//settings.gameLoop_interval_ns = 100000000;	//10FPSå ì™ì˜™ å ìŒ”ëŒì˜™ - 'å ì™ì˜™å ì‹œìš¸ì˜™ í‚¤å ì™ì˜™ å ìŒ‰ë¤„ì˜™'å ì‹¹ëŒì˜™ å ì™ì˜™í™©å ì™ì˜™ å ì™ì˜™ å ì™ì˜™å ì™ì˜™ å ì™ì˜™å ì™ì˜™å ï¿½
-			
+
+			//settings.gameLoop_interval_ns = 10000000;		//100FPS¿¡ ÇØ´ç - 'µ¿½Ã¿¡ Å°¸¦ ÀÔ·Â'ÇÏ´Â »óÈ²ÀÌ »ó´ëÀûÀ¸·Î Àû°Ô ¿¬ÃâµÊ
+			settings.gameLoop_interval_ns = 16666666;		//¾à 60FPS¿¡ ÇØ´ç
+			//settings.gameLoop_interval_ns = 100000000;	//10FPS¿¡ ÇØ´ç - 'µ¿½Ã¿¡ Å°¸¦ ÀÔ·Â'ÇÏ´Â »óÈ²ÀÌ ²Ï ÀÚÁÖ ¿¬ÃâµÊ
+
 			settings.gameLoop_use_virtualTimingMode = false;
 			settings.numberOfButtons = 5;
-			
+
 			GameFrame window = new InputSampleFrame(settings);
 			window.setVisible(true);
 		}
-		
+
 		if ( mode == 2 )
 		{
 			GameFrameSettings settings = new GameFrameSettings();
-			settings.window_title = "LOOTå ì™ì˜™ å ì™ì˜™å ì™ì˜™å ï¿½ å ì™ì˜™å ì™ì˜™ å ì™ì˜™å ï¿½ å ì™ì˜™å ì™ì˜™";
+			settings.window_title = "LOOT¸¦ »ç¿ëÇÑ À½¿ø Àç»ı ¿¹Á¦";
 			settings.canvas_width = 160;
 			settings.canvas_height = 60;
-			
-			settings.gameLoop_interval_ns = 10000000;		//100FPSå ì™ì˜™ å ìŒ”ëŒì˜™ - å ì™ì˜™ å ì™ì˜™å ì™ì˜™å ì™ì˜™ å ìŒ“ëªŒì˜™å ì™ì˜™ å ìŒœì–µì˜™å ì™ì˜™ å ì™ì˜™å ì™ì˜™ å ì™ì˜™å ì™ì˜™å ì‹¤ë¤„ì˜™ å ì™ì˜™å ì™ì˜™å ì™ì˜™å ì™ì˜™ å ì™ì˜™å ì™ì˜™å ì™ì˜™ å ì™ì˜™å ì™ì˜™å ì‹ ê³¤ì˜™å ï¿½ å ì™ì˜™å ì™ì˜™ å ì‹±ë¤„ì˜™å ì™ì˜™ å ì™ì˜™å ì™ì˜™
-			
+
+			settings.gameLoop_interval_ns = 10000000;		//100FPS¿¡ ÇØ´ç - ÀÌ ¿¹Á¦´Â ±×¸®±â ÀÛ¾÷ÀÌ °ÅÀÇ ¾øÀ¸¹Ç·Î ÇÁ·¹ÀÓÀ» ºü¸£°Ô ½ÇÇà½ÃÅ°±â À§ÇØ ÀÌ·¸°Ô ¼³Á¤
+
 			settings.gameLoop_use_virtualTimingMode = false;
 			settings.numberOfButtons = 1;
-			
+
 			GameFrame window = new AudioSampleFrame(settings);
 			window.setVisible(true);
 		}
