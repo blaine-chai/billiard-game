@@ -16,7 +16,6 @@ public class Program
 			settings.canvas_height = 600;
 
 //			settings.gameLoop_interval_ns = 10000000;		//100FPS에 해당 - 이를 버틸 수 있는 컴퓨터는 그리 많지 않을테니 보통 실제 FPS는 이보다 떨어지게 됨
-//			settings.gameLoop_interval_ns = 1000000;		//100FPS에 해당 - 이를 버틸 수 있는 컴퓨터는 그리 많지 않을테니 보통 실제 FPS는 이보다 떨어지게 됨
 			settings.gameLoop_interval_ns = 16666666;		//약 60FPS에 해당
 			//settings.gameLoop_interval_ns = 100000000;	//10FPS에 해당 - 화면이 초당 10번밖에 갱신되지 않으면 버벅거리는게 눈에 보임
 

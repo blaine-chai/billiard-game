@@ -1,1 +1,11 @@
+./bin
+.DS_Store
+*/.DS_Store
+*.iml
+
+## Directory-based project format:
+.idea/*
+.idea
+bin/*
+
 /bin/
