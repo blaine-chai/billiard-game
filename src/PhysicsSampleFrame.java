@@ -7,9 +7,6 @@ import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.util.Random;
 
-import loot.*;
-import loot.graphics.DrawableObject;
-
 /**
  * LOOT 라이브러리를 간단한 물리 환경과 함께 사용한 예제입니다.
  *
