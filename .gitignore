@@ -6,5 +6,5 @@
 ## Directory-based project format:
 .idea/*
 .idea
-
+bin/*
 

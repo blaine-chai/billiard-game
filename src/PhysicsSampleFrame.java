@@ -39,8 +39,8 @@ public class PhysicsSampleFrame extends GameFrame {
 	 */
 
     static final int numberOfBalls = 20;                //화면 내에 있는 공의 수(너무 많으면 FPS 저하의 원인이 됨)
-    static final int ball_width = 30;                    //공 하나의 가로 길이(단위는 픽셀)
-    static final int ball_height = 30;                    //공 하나의 세로 길이(단위는 픽셀)
+    static final int ball_width = 50;                    //공 하나의 가로 길이(단위는 픽셀)
+    static final int ball_height = 50;                    //공 하나의 세로 길이(단위는 픽셀)
 
     static final double max_hit_force = 1;            //인력의 최대값(단위는 픽셀/ms^2)
     static final double max_gravitation = 10;            //인력의 최대값(단위는 픽셀/ms^2)
@@ -253,7 +253,7 @@ public class PhysicsSampleFrame extends GameFrame {
             }
 
 
-            //이번 프레임에 마우스 버튼을 뗐다면 척력 적용ddd
+            //이번 프레임에 마우스 버튼을 뗐다면 척력 적용
             /*if (isRepulsionRequested == true && ball.equals(balls[0])) {
                 double displacement_x = inputs.pos_mouseCursor.x - ball.p_x - ball_width / 2;
                 double displacement_y = inputs.pos_mouseCursor.y - ball.p_y - ball_height / 2;
@@ -399,25 +399,25 @@ public class PhysicsSampleFrame extends GameFrame {
         //check if root is -interval < root1 && root1 < 0
         if (ddx == 0 && ddy == 0) {
             t = 0;
-            System.out.println(0);
+//            System.out.println(0);
         } else if (-interval < root1 && root1 < 0) {
             t = root1;
-            System.out.println(1);
+//            System.out.println(1);
         } else if (-interval < root2 && root2 < 0) {
             t = root2;
-            System.out.println(2);
+//            System.out.println(2);
         } else {
             t = 0;
-            System.out.println(3);
+//            System.out.println(3);
         }
 
-        System.out.println(i);
-        System.out.println(j);
-        System.out.println("root1: "+root1);
-        System.out.println("root2: "+root2);
-        System.out.println("distance:"+((ddx * ddx) * (ddx * ddx) + (ddy * ddy) * (ddy * ddy)));
-        System.out.println("t: " + t);
-        System.out.println("interval: "+interval);
+//        System.out.println(i);
+//        System.out.println(j);
+//        System.out.println("root1: "+root1);
+//        System.out.println("root2: "+root2);
+//        System.out.println("distance:"+((ddx * ddx) * (ddx * ddx) + (ddy * ddy) * (ddy * ddy)));
+//        System.out.println("t: " + t);
+//        System.out.println("interval: "+interval);
 
         double ip_x = i.p_x + t * i.v_x;
         double ip_y = i.p_y + t * i.v_y;
