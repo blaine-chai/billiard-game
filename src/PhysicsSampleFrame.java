@@ -38,10 +38,11 @@ public class PhysicsSampleFrame extends GameFrame {
 	 * 
 	 */
 
-    static final int numberOfBalls = 100;                //화면 내에 있는 공의 수(너무 많으면 FPS 저하의 원인이 됨)
+    static final int numberOfBalls = 20;                //화면 내에 있는 공의 수(너무 많으면 FPS 저하의 원인이 됨)
     static final int ball_width = 30;                    //공 하나의 가로 길이(단위는 픽셀)
     static final int ball_height = 30;                    //공 하나의 세로 길이(단위는 픽셀)
 
+    static final double max_hit_force = 1;            //인력의 최대값(단위는 픽셀/ms^2)
     static final double max_gravitation = 10;            //인력의 최대값(단위는 픽셀/ms^2)
     static final double max_repulsion = 50.0;            //척력의 최대값(단위는 픽셀/ms^2)
     static final double max_velocity_x = 50;            //X방향 속력의 최대값(단위는 픽셀/ms)
@@ -137,7 +138,6 @@ public class PhysicsSampleFrame extends GameFrame {
         balls[0] = new RedBall(rand.nextInt(settings.canvas_width - ball_width - 2) + 1, rand.nextInt(settings.canvas_height - ball_height - 2) + 1);
         for (int iBall = 1; iBall < balls.length; ++iBall)
             balls[iBall] = new Ball(rand.nextInt(settings.canvas_width - ball_width - 2) + 1, rand.nextInt(settings.canvas_height - ball_height - 2) + 1);
-
         //FPS 출력에 사용할 색 및 글자체 가져오기
         LoadColor(Color.black);
         LoadFont("돋움체 BOLD 24");
@@ -240,11 +240,16 @@ public class PhysicsSampleFrame extends GameFrame {
                     gravitation = max_gravitation;
 
 //                ball.a_x = gravitation * displacement_x / Math.sqrt(squaredDistance);
-                balls[i].a_x = displacement_x / 200;
+                if (Math.sqrt(squaredDistance) / 200 > max_hit_force) {
+                    balls[i].a_x = displacement_x / Math.sqrt(squaredDistance) * max_hit_force;
+                    balls[i].a_y = displacement_y / Math.sqrt(squaredDistance) * max_hit_force;
+//                    System.out.println(balls[i].a_x + "," + balls[i].a_y + "," + Math.sqrt(squaredDistance));
+                } else {
+                    balls[i].a_x = displacement_x / 200;
+                    balls[i].a_y = displacement_y / 200;
+                }
 //                ball.a_y = gravitation * displacement_y / Math.sqrt(squaredDistance);
-                balls[i].a_y = displacement_y / 200;
 
-                System.out.println(balls[i].a_x + "," + balls[i].a_y);
             }
 
 
@@ -332,7 +337,7 @@ public class PhysicsSampleFrame extends GameFrame {
                             && (balls[i].collideWith != j || balls[j].collideWith != i)) {
                         balls[i].collideWith = j;
                         balls[j].collideWith = i;
-                        System.out.println(i + "," + j);
+//                        System.out.println(i + "," + j);
                         fixOverlap(balls[i], balls[j], interval);
                     }
                 }
@@ -381,30 +386,38 @@ public class PhysicsSampleFrame extends GameFrame {
     public void fixOverlap(Ball i, Ball j, double interval) {
         double dx = i.p_x - j.p_x;
         double dy = i.p_y - j.p_y;
-        double ddx = i.p_x - j.v_x;
-        double ddy = i.p_y - j.v_y;
+        double ddx = i.v_x - j.v_x;
+        double ddy = i.v_y - j.v_y;
 
-//        double root1, root2;
+        double root1, root2;
         double t;
 
-//        root1 = ((dx * ddx + dy * ddy) + Math.sqrt((dx * ddx + dy * ddy) * (dx * ddx + dy * ddy) - ((ddx * ddx) + (ddy * ddy)) * (dx * dx + dy * dy - (double) ball_width * ball_width))) / ((ddx * ddx) * (ddx * ddx) + (ddy * ddy) * (ddy * ddy));
+        root1 = (-(dx * ddx + dy * ddy) + Math.sqrt((dx * ddx + dy * ddy) * (dx * ddx + dy * ddy) - ((ddx * ddx) + (ddy * ddy)) * (dx * dx + dy * dy - (double) ball_width * ball_width))) / ((ddx * ddx)  +  (ddy * ddy));
 
-//        root2 = ((dx * ddx + dy * ddy) - Math.sqrt((dx * ddx + dy * ddy) * (dx * ddx + dy * ddy) - ((ddx * ddx) + (ddy * ddy)) * (dx * dx + dy * dy - (double) ball_width * ball_width))) / ((ddx * ddx) * (ddx * ddx) + (ddy * ddy) * (ddy * ddy));
-        t = ((dx * ddx + dy * ddy) - Math.sqrt((dx * ddx + dy * ddy) * (dx * ddx + dy * ddy) - ((ddx * ddx) + (ddy * ddy)) * (dx * dx + dy * dy - (double) ball_width * ball_width))) / ((ddx * ddx) * (ddx * ddx) + (ddy * ddy) * (ddy * ddy));
+        root2 = (-(dx * ddx + dy * ddy) - Math.sqrt(((dx * ddx + dy * ddy) * (dx * ddx + dy * ddy)) - (((ddx * ddx) + (ddy * ddy)) * (dx * dx + dy * dy - (double) ball_width * ball_width)))) / ((ddx * ddx) + (ddy * ddy));
+//        t = ((dx * ddx + dy * ddy) - Math.sqrt((dx * ddx + dy * ddy) * (dx * ddx + dy * ddy) - ((ddx * ddx) + (ddy * ddy)) * (dx * dx + dy * dy - (double) ball_width * ball_width))) / ((ddx * ddx) * (ddx * ddx) + (ddy * ddy) * (ddy * ddy));
         //check if root is -interval < root1 && root1 < 0
-        /*if (-interval < root1 && root1 < 0) {
+        if (ddx == 0 && ddy == 0) {
+            t = 0;
+            System.out.println(0);
+        } else if (-interval < root1 && root1 < 0) {
             t = root1;
             System.out.println(1);
         } else if (-interval < root2 && root2 < 0) {
             t = root2;
             System.out.println(2);
-        } else*/
-//            t = root2;
+        } else {
+            t = 0;
+            System.out.println(3);
+        }
 
-//        System.out.println(i);
-//        System.out.println(j);
-//        System.out.println(t);
-//        System.out.println(interval);
+        System.out.println(i);
+        System.out.println(j);
+        System.out.println("root1: "+root1);
+        System.out.println("root2: "+root2);
+        System.out.println("distance:"+((ddx * ddx) * (ddx * ddx) + (ddy * ddy) * (ddy * ddy)));
+        System.out.println("t: " + t);
+        System.out.println("interval: "+interval);
 
         double ip_x = i.p_x + t * i.v_x;
         double ip_y = i.p_y + t * i.v_y;
@@ -428,5 +441,10 @@ public class PhysicsSampleFrame extends GameFrame {
         // set velocity of j
         j.v_y = kji * dy + kjj * dx;
         j.v_x = kji * dx - kjj * dy;
+
+        i.p_x = ip_x + i.v_x * (-t);
+        i.p_y = ip_y + i.v_y * (-t);
+        j.p_x = jp_x + j.v_x * (-t);
+        j.p_y = jp_y + j.v_y * (-t);
     }
 }
