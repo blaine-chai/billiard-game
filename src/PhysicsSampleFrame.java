@@ -1,11 +1,11 @@
-import java.awt.Color;
+import loot.GameFrame;
+import loot.GameFrameSettings;
+import loot.graphics.DrawableObject;
+
+import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.util.Random;
-
-import javafx.scene.shape.Circle;
-import loot.*;
-import loot.graphics.DrawableObject;
 
 /**
  * LOOT 라이브러리를 간단한 물리 환경과 함께 사용한 예제입니다.
@@ -38,7 +38,7 @@ public class PhysicsSampleFrame extends GameFrame {
 	 * 
 	 */
 
-    static final int numberOfBalls = 10;                //화면 내에 있는 공의 수(너무 많으면 FPS 저하의 원인이 됨)
+    static final int numberOfBalls = 100;                //화면 내에 있는 공의 수(너무 많으면 FPS 저하의 원인이 됨)
     static final int ball_width = 30;                    //공 하나의 가로 길이(단위는 픽셀)
     static final int ball_height = 30;                    //공 하나의 세로 길이(단위는 픽셀)
 
@@ -248,7 +248,7 @@ public class PhysicsSampleFrame extends GameFrame {
             }
 
 
-            //이번 프레임에 마우스 버튼을 뗐다면 척력 적용
+            //이번 프레임에 마우스 버튼을 뗐다면 척력 적용ddd
             /*if (isRepulsionRequested == true && ball.equals(balls[0])) {
                 double displacement_x = inputs.pos_mouseCursor.x - ball.p_x - ball_width / 2;
                 double displacement_y = inputs.pos_mouseCursor.y - ball.p_y - ball_height / 2;
@@ -384,18 +384,22 @@ public class PhysicsSampleFrame extends GameFrame {
         double ddx = i.p_x - j.v_x;
         double ddy = i.p_y - j.v_y;
 
-        double root1, root2;
-
-        root1 = ((dx * ddx + dy * ddy) + Math.sqrt((dx * ddx + dy * ddy) * (dx * ddx + dy * ddy) - ((ddx * ddx) + (ddy * ddy)) * (dx * dx + dy * dy - (double) ball_width * ball_width))) / ((ddx * ddx) * (ddx * ddx) + (ddy * ddy) * (ddy * ddy));
-
-        root2 = ((dx * ddx + dy * ddy) - Math.sqrt((dx * ddx + dy * ddy) * (dx * ddx + dy * ddy) - ((ddx * ddx) + (ddy * ddy)) * (dx * dx + dy * dy - (double) ball_width * ball_width))) / ((ddx * ddx) * (ddx * ddx) + (ddy * ddy) * (ddy * ddy));
-        //check if root is -interval < root1 && root1 < 0
+//        double root1, root2;
         double t;
-        if (-interval < root1 && root1 < 0) {
+
+//        root1 = ((dx * ddx + dy * ddy) + Math.sqrt((dx * ddx + dy * ddy) * (dx * ddx + dy * ddy) - ((ddx * ddx) + (ddy * ddy)) * (dx * dx + dy * dy - (double) ball_width * ball_width))) / ((ddx * ddx) * (ddx * ddx) + (ddy * ddy) * (ddy * ddy));
+
+//        root2 = ((dx * ddx + dy * ddy) - Math.sqrt((dx * ddx + dy * ddy) * (dx * ddx + dy * ddy) - ((ddx * ddx) + (ddy * ddy)) * (dx * dx + dy * dy - (double) ball_width * ball_width))) / ((ddx * ddx) * (ddx * ddx) + (ddy * ddy) * (ddy * ddy));
+        t = ((dx * ddx + dy * ddy) - Math.sqrt((dx * ddx + dy * ddy) * (dx * ddx + dy * ddy) - ((ddx * ddx) + (ddy * ddy)) * (dx * dx + dy * dy - (double) ball_width * ball_width))) / ((ddx * ddx) * (ddx * ddx) + (ddy * ddy) * (ddy * ddy));
+        //check if root is -interval < root1 && root1 < 0
+        /*if (-interval < root1 && root1 < 0) {
             t = root1;
-        } else {
+            System.out.println(1);
+        } else if (-interval < root2 && root2 < 0) {
             t = root2;
-        }
+            System.out.println(2);
+        } else*/
+//            t = root2;
 
 //        System.out.println(i);
 //        System.out.println(j);
