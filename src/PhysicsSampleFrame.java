@@ -3,7 +3,6 @@ import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.util.Random;
 
-import javafx.scene.shape.Circle;
 import loot.*;
 import loot.graphics.DrawableObject;
 
