@@ -38,21 +38,25 @@ public class PhysicsSampleFrame extends GameFrame {
 	 * 
 	 */
 
-    static final int numberOfBalls = 100;                //화면 내에 있는 공의 수(너무 많으면 FPS 저하의 원인이 됨)
+    //static final int numberOfBalls = 100;                //화면 내에 있는 공의 수(너무 많으면 FPS 저하의 원인이 됨)
+    static final int numberOfBalls = 3;                //화면 내에 있는 공의 수(너무 많으면 FPS 저하의 원인이 됨)
     static final int ball_width = 30;                    //공 하나의 가로 길이(단위는 픽셀)
     static final int ball_height = 30;                    //공 하나의 세로 길이(단위는 픽셀)
 
     static final double max_gravitation = 10;            //인력의 최대값(단위는 픽셀/ms^2)
     static final double max_repulsion = 50.0;            //척력의 최대값(단위는 픽셀/ms^2)
-    static final double max_velocity_x = 50;            //X방향 속력의 최대값(단위는 픽셀/ms)
-    static final double max_velocity_y = 50;            //X방향 속력의 최대값(단위는 픽셀/ms)
+    static final double max_velocity_x = 3;            //X방향 속력의 최대값(단위는 픽셀/ms)
+    static final double max_velocity_y = 3;            //X방향 속력의 최대값(단위는 픽셀/ms)
 
-    static final double coef_gravitation = 300.0;        //인력을 계산할 때 사용하는 계수
+    static final double coef_gravitation = 10000.0;        //인력을 계산할 때 사용하는 계수
     static final double coef_repulsion = 0.1;            //척력을 계산할 때 사용하는 계수
     //    static final double coef_friction = -0.0001;            //마찰력을 적용하기 위한 계수(속도에 이 값을 곱한 만큼이 마찰력이 됨. 따라서 이 값은 음수여야 함. 마찰력의 단위는 픽셀/ms^2)
     static final double coef_friction = -0.0005;            //마찰력을 적용하기 위한 계수(속도에 이 값을 곱한 만큼이 마찰력이 됨. 따라서 이 값은 음수여야 함. 마찰력의 단위는 픽셀/ms^2)
 
     static final int COLLIDE_WITH_INIT = Integer.MAX_VALUE;
+    
+    static final int M = 0;
+    static final int W = 1;
 
     /**
      * '공' 하나를 표현하는 클래스입니다.<br>
@@ -74,23 +78,64 @@ public class PhysicsSampleFrame extends GameFrame {
         public double a_x;
         public double a_y;
         public int collideWith = COLLIDE_WITH_INIT;
+        public int sex;
+        public int name;
+        public int preference[];
+        public boolean myTurn;
 
         public Ball(int x, int y) {
             super(x, y, ball_width, ball_height, images.GetImage("ball"));
             p_x = x;
             p_y = y;
+            this.preference = new int[3];
+            this.myTurn = false;
         }
 
         public Ball(int x, int y, String imageName) {
             super(x, y, ball_width, ball_height, images.GetImage(imageName));
             p_x = x;
             p_y = y;
+            this.preference = new int[3];
+            this.myTurn = false;
         }
 
         @Override
         public String toString() {
             return "p_x : " + p_x + "\n" + "p_y : " + p_y + "\n" + "v_x : " + v_x + "\n" + "v_y : " + v_y + "\n" + "a_y : " + a_y + "\n" + "a_y : " + a_y + "\n" + "x : " + x + "\n" + "y : " + y;
         }
+        
+        public void setSex(int sex)
+        {
+        	this.sex = sex;
+        }
+        
+        public int getSex()
+        {
+        	return this.sex;
+        }
+        
+        public void setPreference(int preference[])
+        {
+        	for(int i = 0; i < 3; i++) {
+        		this.preference[i] = preference[i];
+        	}
+        }
+        
+        public int getPreference(int opponentNum)
+        {
+        	return this.preference[opponentNum];
+        }
+        
+        public void setName(int nameNum)
+        {
+        	this.name = nameNum;
+        }
+        
+        public int getName()
+        {
+        	return this.name;
+        }
+        
     }
 
     public class RedBall extends Ball {
@@ -133,16 +178,50 @@ public class PhysicsSampleFrame extends GameFrame {
     public boolean Initialize() {
         Random rand = new Random();
 
+        /*
         //각 공을 랜덤 위치에 배치
         balls[0] = new RedBall(rand.nextInt(settings.canvas_width - ball_width - 2) + 1, rand.nextInt(settings.canvas_height - ball_height - 2) + 1);
         for (int iBall = 1; iBall < balls.length; ++iBall)
             balls[iBall] = new Ball(rand.nextInt(settings.canvas_width - ball_width - 2) + 1, rand.nextInt(settings.canvas_height - ball_height - 2) + 1);
+        */
+        
+        balls[0] = new RedBall(400, 400);
+        balls[1] = new Ball(455, 455);
+        balls[2] = new Ball(0, 0);
+        myInit();
 
         //FPS 출력에 사용할 색 및 글자체 가져오기
         LoadColor(Color.black);
         LoadFont("돋움체 BOLD 24");
 
         return true;
+    }
+    
+    public void myInit()
+    {
+    	int redballPref[] = new int[3];
+    	int opponentPref[] = new int[3];
+    	redballPref[0] = 5;
+    	redballPref[1] = 5;
+    	redballPref[2] = 5;
+    	opponentPref[0] = 5;
+    	opponentPref[1] = 5;
+    	opponentPref[2] = 5;
+
+    	balls[0].setName(1);
+    	balls[0].setSex(0);
+    	balls[0].setPreference(redballPref);
+
+    	balls[1].setName(1);
+    	balls[1].setSex(1);
+    	balls[1].setPreference(opponentPref);
+    	
+    	balls[2].setName(2);
+    	balls[2].setSex(1);
+    	balls[2].setPreference(opponentPref);
+
+    	balls[0].myTurn = true;
+    	
     }
 
     @Override
@@ -244,7 +323,37 @@ public class PhysicsSampleFrame extends GameFrame {
 //                ball.a_y = gravitation * displacement_y / Math.sqrt(squaredDistance);
                 balls[i].a_y = displacement_y / 200;
 
-                System.out.println(balls[i].a_x + "," + balls[i].a_y);
+                //System.out.println(balls[i].a_x + "," + balls[i].a_y);
+				for (int j = i + 1; j < balls.length; j++) {
+					// 현재 플레이하는 공에 대해
+					if(balls[i].myTurn == true) {
+						int sex = balls[i].getSex();
+						// 같은 성별이면 통과
+						if (balls[j].getSex() == sex) continue;
+						
+						int preference = balls[j].getPreference(i) - 3;
+						
+						
+						// 3점 이상 준 경우 호감, 인력 적용
+						if(preference >= 0) {
+							double displacement_xx = balls[i].p_x - balls[j].p_x - ball_width / 2;
+							double displacement_yy = balls[i].p_y - balls[j].p_y - ball_height / 2;
+							double squaredDistance1 = displacement_xx * displacement_xx + displacement_yy * displacement_yy;
+							double gravitation1 = coef_gravitation * interval / squaredDistance1;
+
+							if (gravitation1 > max_gravitation)
+								gravitation1 = max_gravitation;
+
+							balls[i].a_x = gravitation1 * displacement_x / Math.sqrt(squaredDistance1);
+							balls[i].a_y = gravitation1 * displacement_y / Math.sqrt(squaredDistance1);
+						}
+							// 3점 이하 준 경우 비호감, 척력 적용
+						else {
+							
+						}
+						
+					}
+			}
             }
 
 
@@ -263,6 +372,37 @@ public class PhysicsSampleFrame extends GameFrame {
 //                ball.a_y = -1.0 * repulsion * displacement_y / Math.sqrt(squaredDistance);
                 ball.a_y = -100.0 * repulsion * displacement_y / Math.sqrt(squaredDistance);
             }*/
+
+			/*for (int j = i + 1; j < balls.length; j++) {
+				// 현재 플레이하는 공에 대해
+				if(balls[i].myTurn == true) {
+					int sex = balls[i].getSex();
+					// 같은 성별이면 통과
+					if (balls[j].getSex() == sex) continue;
+					
+					int preference = balls[j].getPreference(i) - 3;
+					
+					
+					// 3점 이상 준 경우 호감, 인력 적용
+					if(preference >= 0) {
+						double displacement_x = balls[i].p_x - balls[j].p_x - ball_width / 2;
+						double displacement_y = balls[i].p_y - balls[j].p_y - ball_height / 2;
+						double squaredDistance = displacement_x * displacement_x + displacement_y * displacement_y;
+						double gravitation = coef_gravitation * interval / squaredDistance;
+
+						if (gravitation > max_gravitation)
+							gravitation = max_gravitation;
+
+						balls[i].a_x = gravitation * displacement_x / Math.sqrt(squaredDistance);
+						balls[i].a_y = gravitation * displacement_y / Math.sqrt(squaredDistance);
+					}
+						// 3점 이하 준 경우 비호감, 척력 적용
+					else {
+						
+					}
+					
+				}
+			}*/
 
             //컨트롤 키가 눌려 있지 않다면 속도 / 가속도 반영
             if (isPauseRequested == false) {
@@ -332,7 +472,7 @@ public class PhysicsSampleFrame extends GameFrame {
                             && (balls[i].collideWith != j || balls[j].collideWith != i)) {
                         balls[i].collideWith = j;
                         balls[j].collideWith = i;
-                        System.out.println(i + "," + j);
+                        //System.out.println(i + "," + j);
                         fixOverlap(balls[i], balls[j], interval);
                     }
                 }
@@ -381,8 +521,8 @@ public class PhysicsSampleFrame extends GameFrame {
     public void fixOverlap(Ball i, Ball j, double interval) {
         double dx = i.p_x - j.p_x;
         double dy = i.p_y - j.p_y;
-        double ddx = i.p_x - j.v_x;
-        double ddy = i.p_y - j.v_y;
+        double ddx = i.v_x - j.v_x;
+        double ddy = i.v_y - j.v_y;
 
 //        double root1, root2;
         double t;
@@ -424,9 +564,13 @@ public class PhysicsSampleFrame extends GameFrame {
         // set velocity of i
         i.v_y = kij * dy + kii * dx;
         i.v_x = kij * dx - kii * dy;
+        if (i.v_x >= max_velocity_x) i.v_x %= max_velocity_x;
+        if (i.v_y >= max_velocity_y) i.v_y %= max_velocity_y;
 
         // set velocity of j
         j.v_y = kji * dy + kjj * dx;
         j.v_x = kji * dx - kjj * dy;
+        if (j.v_x >= max_velocity_x) j.v_x %= max_velocity_x;
+        if (j.v_y >= max_velocity_y) j.v_y %= max_velocity_y;
     }
 }
