@@ -1,6 +1,9 @@
 import loot.GameFrame;
 import loot.GameFrameSettings;
 import loot.graphics.DrawableObject;
+import model.Ball;
+import model.RedBall;
+import values.Constants;
 
 import java.awt.*;
 import java.awt.event.KeyEvent;
@@ -38,26 +41,6 @@ public class PhysicsSampleFrame extends GameFrame {
 	 * 
 	 */
 
-    //static final int numberOfBalls = 100;                //화면 내에 있는 공의 수(너무 많으면 FPS 저하의 원인이 됨)
-    static final int numberOfBalls = 3;                //화면 내에 있는 공의 수(너무 많으면 FPS 저하의 원인이 됨)
-    static final int ball_width = 50;                    //공 하나의 가로 길이(단위는 픽셀)
-    static final int ball_height = 50;                    //공 하나의 세로 길이(단위는 픽셀)
-
-    static final double max_hit_force = 1;            //인력의 최대값(단위는 픽셀/ms^2)
-    static final double max_gravitation = 10;            //인력의 최대값(단위는 픽셀/ms^2)
-    static final double max_repulsion = 50.0;            //척력의 최대값(단위는 픽셀/ms^2)
-    static final double max_velocity_x = 3;            //X방향 속력의 최대값(단위는 픽셀/ms)
-    static final double max_velocity_y = 3;            //X방향 속력의 최대값(단위는 픽셀/ms)
-
-    static final double coef_gravitation = 10000.0;        //인력을 계산할 때 사용하는 계수
-    static final double coef_repulsion = 0.1;            //척력을 계산할 때 사용하는 계수
-    //    static final double coef_friction = -0.0001;            //마찰력을 적용하기 위한 계수(속도에 이 값을 곱한 만큼이 마찰력이 됨. 따라서 이 값은 음수여야 함. 마찰력의 단위는 픽셀/ms^2)
-    static final double coef_friction = -0.0005;            //마찰력을 적용하기 위한 계수(속도에 이 값을 곱한 만큼이 마찰력이 됨. 따라서 이 값은 음수여야 함. 마찰력의 단위는 픽셀/ms^2)
-
-    static final int COLLIDE_WITH_INIT = Integer.MAX_VALUE;
-    
-    static final int M = 0;
-    static final int W = 1;
 
     /**
      * '공' 하나를 표현하는 클래스입니다.<br>
@@ -71,79 +54,6 @@ public class PhysicsSampleFrame extends GameFrame {
      *
      * @author Racin
      */
-    public class Ball extends DrawableObject {
-        public double p_x;
-        public double p_y;
-        public double v_x;
-        public double v_y;
-        public double a_x;
-        public double a_y;
-        public int collideWith = COLLIDE_WITH_INIT;
-        public int sex;
-        public int name;
-        public int preference[];
-        public boolean myTurn;
-
-        public Ball(int x, int y) {
-            super(x, y, ball_width, ball_height, images.GetImage("ball"));
-            p_x = x;
-            p_y = y;
-            this.preference = new int[3];
-            this.myTurn = false;
-        }
-
-        public Ball(int x, int y, String imageName) {
-            super(x, y, ball_width, ball_height, images.GetImage(imageName));
-            p_x = x;
-            p_y = y;
-            this.preference = new int[3];
-            this.myTurn = false;
-        }
-
-        @Override
-        public String toString() {
-            return "p_x : " + p_x + "\n" + "p_y : " + p_y + "\n" + "v_x : " + v_x + "\n" + "v_y : " + v_y + "\n" + "a_y : " + a_y + "\n" + "a_y : " + a_y + "\n" + "x : " + x + "\n" + "y : " + y;
-        }
-        
-        public void setSex(int sex)
-        {
-        	this.sex = sex;
-        }
-        
-        public int getSex()
-        {
-        	return this.sex;
-        }
-        
-        public void setPreference(int preference[])
-        {
-        	for(int i = 0; i < 3; i++) {
-        		this.preference[i] = preference[i];
-        	}
-        }
-        
-        public int getPreference(int opponentNum)
-        {
-        	return this.preference[opponentNum];
-        }
-        
-        public void setName(int nameNum)
-        {
-        	this.name = nameNum;
-        }
-        
-        public int getName()
-        {
-        	return this.name;
-        }
-        
-    }
-
-    public class RedBall extends Ball {
-        public RedBall(int x, int y) {
-            super(x, y, "redball");
-        }
-    }
 
 	/* -------------------------------------------
      *
@@ -151,7 +61,7 @@ public class PhysicsSampleFrame extends GameFrame {
 	 * 
 	 */
 
-    Ball[] balls = new Ball[numberOfBalls];                    //화면 내에 있는 공 목록
+    Ball[] balls = new Ball[Constants.numberOfBalls];                    //화면 내에 있는 공 목록
     long startTime_pressing;                                //마우스 왼쪽 버튼을 누르기 시작한 시각
 
     long timeStamp_firstFrame = 0;                            //첫 프레임의 timeStamp -> 실행 이후로 경과된 시간 계산에 사용
@@ -186,9 +96,9 @@ public class PhysicsSampleFrame extends GameFrame {
             balls[iBall] = new Ball(rand.nextInt(settings.canvas_width - ball_width - 2) + 1, rand.nextInt(settings.canvas_height - ball_height - 2) + 1);
         */
         
-        balls[0] = new RedBall(400, 400);
-        balls[1] = new Ball(455, 455);
-        balls[2] = new Ball(0, 0);
+        balls[0] = new RedBall(400, 400, images);
+        balls[1] = new Ball(455, 455, images);
+        balls[2] = new Ball(0, 0, images);
         myInit();
 
         //FPS 출력에 사용할 색 및 글자체 가져오기
@@ -309,12 +219,12 @@ public class PhysicsSampleFrame extends GameFrame {
             			double displacement_yy = balls[j].p_y - balls[i].p_y;//- ball_height / 2;
             			double squaredDistance1 = displacement_xx * displacement_xx + displacement_yy * displacement_yy;
             			//double gravitation1 = coef_gravitation/1000 * interval / squaredDistance1;
-            			double gravitation1 = coef_gravitation * interval/50000000;
+            			double gravitation1 = Constants.coef_gravitation * interval/50000000;
             			
             			if ( Math.sqrt(squaredDistance1) >= 150 ) continue;
 
-            			if (gravitation1 > max_gravitation)
-            				gravitation1 = max_gravitation;
+            			if (gravitation1 > Constants.max_gravitation)
+            				gravitation1 = Constants.max_gravitation;
 
             			balls[i].a_x = gravitation1 * displacement_xx / Math.sqrt(squaredDistance1);
             			balls[i].a_y = gravitation1 * displacement_yy / Math.sqrt(squaredDistance1);
@@ -325,13 +235,13 @@ public class PhysicsSampleFrame extends GameFrame {
             			double displacement_yy = balls[j].p_y - balls[i].p_y;//- ball_height / 2;
             			double squaredDistance1 = displacement_xx * displacement_xx + displacement_yy * displacement_yy;
             			//double gravitation1 = coef_gravitation/1000 * interval / squaredDistance1;
-            			double repulsion = coef_repulsion * (timeStamp - startTime_pressing) / squaredDistance1;
+            			double repulsion = Constants.coef_repulsion * (timeStamp - startTime_pressing) / squaredDistance1;
             			
             			if ( Math.sqrt(squaredDistance1) >= 150 ) continue;
 
 
-            			if (repulsion > max_repulsion)
-            				repulsion = max_repulsion;
+            			if (repulsion > Constants.max_repulsion)
+            				repulsion = Constants.max_repulsion;
 
             			balls[i].a_x = -100.0 * repulsion * displacement_xx / Math.sqrt(squaredDistance1);
             			balls[i].a_y = -100.0 * repulsion * displacement_yy / Math.sqrt(squaredDistance1);
@@ -356,20 +266,20 @@ public class PhysicsSampleFrame extends GameFrame {
 
             //마우스 버튼을 뗄때 힘 적용
             if (isRepulsionRequested == true && balls[i].equals(balls[0])) {
-                double displacement_x = inputs.pos_mouseCursor.x - balls[i].p_x - ball_width / 2;
-                double displacement_y = inputs.pos_mouseCursor.y - balls[i].p_y - ball_height / 2;
+                double displacement_x = inputs.pos_mouseCursor.x - balls[i].p_x - Constants.ball_width / 2;
+                double displacement_y = inputs.pos_mouseCursor.y - balls[i].p_y - Constants.ball_height / 2;
                 double squaredDistance = displacement_x * displacement_x + displacement_y * displacement_y;
-                double gravitation = coef_gravitation * interval / squaredDistance;
+                double gravitation = Constants.coef_gravitation * interval / squaredDistance;
 
-                balls[i].collideWith = COLLIDE_WITH_INIT;
+                balls[i].collideWith = Constants.COLLIDE_WITH_INIT;
 
-                if (gravitation > max_gravitation)
-                    gravitation = max_gravitation;
+                if (gravitation > Constants.max_gravitation)
+                    gravitation = Constants.max_gravitation;
 
 //                ball.a_x = gravitation * displacement_x / Math.sqrt(squaredDistance);
-                if (Math.sqrt(squaredDistance) / 200 > max_hit_force) {
-                    balls[i].a_x = displacement_x / Math.sqrt(squaredDistance) * max_hit_force;
-                    balls[i].a_y = displacement_y / Math.sqrt(squaredDistance) * max_hit_force;
+                if (Math.sqrt(squaredDistance) / 200 > Constants.max_hit_force) {
+                    balls[i].a_x = displacement_x / Math.sqrt(squaredDistance) * Constants.max_hit_force;
+                    balls[i].a_y = displacement_y / Math.sqrt(squaredDistance) * Constants.max_hit_force;
 //                    System.out.println(balls[i].a_x + "," + balls[i].a_y + "," + Math.sqrt(squaredDistance));
                 } else {
                     balls[i].a_x = displacement_x / 200;
@@ -432,16 +342,16 @@ public class PhysicsSampleFrame extends GameFrame {
             //컨트롤 키가 눌려 있지 않다면 속도 / 가속도 반영
             if (isPauseRequested == false) {
                 //마찰력 계산
-                balls[i].a_x += coef_friction * interval * balls[i].v_x;
-                balls[i].a_y += coef_friction * interval * balls[i].v_y;
+                balls[i].a_x += Constants.coef_friction * interval * balls[i].v_x;
+                balls[i].a_y += Constants.coef_friction * interval * balls[i].v_y;
 
                 //가속도를 속도에 적용 - 가속도의 경우 미리 시간을 곱했으므로 여기서 더 곱하지는 않음
                 balls[i].v_x += balls[i].a_x;
                 balls[i].v_y += balls[i].a_y;
 
                 //이 예제에서는 창 가장자리에 부딪히면 반사하므로 속도의 절대값이 특정 값보다 작아지도록 보정
-                balls[i].v_x %= max_velocity_x;
-                balls[i].v_y %= max_velocity_y;
+                balls[i].v_x %= Constants.max_velocity_x;
+                balls[i].v_y %= Constants.max_velocity_y;
 
                 //속도를 위치에 적용 - 이 때는 시간을 곱하여 적용
                 balls[i].p_x += balls[i].v_x * interval;
@@ -462,28 +372,28 @@ public class PhysicsSampleFrame extends GameFrame {
                         balls[i].v_x = -balls[i].v_x;
                         balls[i].p_x = -balls[i].p_x;
                         isWithinCanvas = false;
-                        balls[i].collideWith = numberOfBalls;
+                        balls[i].collideWith = Constants.numberOfBalls;
                     }
 
-                    if (balls[i].p_x >= settings.canvas_width - ball_width) {
+                    if (balls[i].p_x >= settings.canvas_width - Constants.ball_width) {
                         balls[i].v_x = -balls[i].v_x;
-                        balls[i].p_x = 2 * (settings.canvas_width - ball_width) - balls[i].p_x;
+                        balls[i].p_x = 2 * (settings.canvas_width - Constants.ball_width) - balls[i].p_x;
                         isWithinCanvas = false;
-                        balls[i].collideWith = numberOfBalls + 1;
+                        balls[i].collideWith = Constants.numberOfBalls + 1;
                     }
 
                     if (balls[i].p_y < 0) {
                         balls[i].v_y = -balls[i].v_y;
                         balls[i].p_y = -balls[i].p_y;
                         isWithinCanvas = false;
-                        balls[i].collideWith = numberOfBalls + 2;
+                        balls[i].collideWith = Constants.numberOfBalls + 2;
                     }
 
-                    if (balls[i].p_y >= settings.canvas_height - ball_height) {
+                    if (balls[i].p_y >= settings.canvas_height - Constants.ball_height) {
                         balls[i].v_y = -balls[i].v_y;
-                        balls[i].p_y = 2 * (settings.canvas_height - ball_height) - balls[i].p_y;
+                        balls[i].p_y = 2 * (settings.canvas_height - Constants.ball_height) - balls[i].p_y;
                         isWithinCanvas = false;
-                        balls[i].collideWith = numberOfBalls + 3;
+                        balls[i].collideWith = Constants.numberOfBalls + 3;
                     }
                 }
                 while (isWithinCanvas == false);
@@ -541,7 +451,7 @@ public class PhysicsSampleFrame extends GameFrame {
         double dy = i.p_y - j.p_y;
 
         double d2 = dx * dx + dy * dy;
-        return d2 < ball_width * ball_width;
+        return d2 < Constants.ball_width * Constants.ball_width;
     }
 
     //수정이 필요함
@@ -554,9 +464,9 @@ public class PhysicsSampleFrame extends GameFrame {
         double root1, root2;
         double t;
 
-        root1 = (-(dx * ddx + dy * ddy) + Math.sqrt((dx * ddx + dy * ddy) * (dx * ddx + dy * ddy) - ((ddx * ddx) + (ddy * ddy)) * (dx * dx + dy * dy - (double) ball_width * ball_width))) / ((ddx * ddx)  +  (ddy * ddy));
+        root1 = (-(dx * ddx + dy * ddy) + Math.sqrt((dx * ddx + dy * ddy) * (dx * ddx + dy * ddy) - ((ddx * ddx) + (ddy * ddy)) * (dx * dx + dy * dy - (double) Constants.ball_width * Constants.ball_width))) / ((ddx * ddx)  +  (ddy * ddy));
 
-        root2 = (-(dx * ddx + dy * ddy) - Math.sqrt(((dx * ddx + dy * ddy) * (dx * ddx + dy * ddy)) - (((ddx * ddx) + (ddy * ddy)) * (dx * dx + dy * dy - (double) ball_width * ball_width)))) / ((ddx * ddx) + (ddy * ddy));
+        root2 = (-(dx * ddx + dy * ddy) - Math.sqrt(((dx * ddx + dy * ddy) * (dx * ddx + dy * ddy)) - (((ddx * ddx) + (ddy * ddy)) * (dx * dx + dy * dy - (double) Constants.ball_width * Constants.ball_width)))) / ((ddx * ddx) + (ddy * ddy));
 //        t = ((dx * ddx + dy * ddy) - Math.sqrt((dx * ddx + dy * ddy) * (dx * ddx + dy * ddy) - ((ddx * ddx) + (ddy * ddy)) * (dx * dx + dy * dy - (double) ball_width * ball_width))) / ((ddx * ddx) * (ddx * ddx) + (ddy * ddy) * (ddy * ddy));
         //check if root is -interval < root1 && root1 < 0
         if (ddx == 0 && ddy == 0) {
@@ -599,14 +509,14 @@ public class PhysicsSampleFrame extends GameFrame {
         // set velocity of i
         i.v_y = kij * dy + kii * dx;
         i.v_x = kij * dx - kii * dy;
-        if (i.v_x >= max_velocity_x) i.v_x %= max_velocity_x;
-        if (i.v_y >= max_velocity_y) i.v_y %= max_velocity_y;
+        if (i.v_x >= Constants.max_velocity_x) i.v_x %= Constants.max_velocity_x;
+        if (i.v_y >= Constants.max_velocity_y) i.v_y %= Constants.max_velocity_y;
 
         // set velocity of j
         j.v_y = kji * dy + kjj * dx;
         j.v_x = kji * dx - kjj * dy;
-        if (j.v_x >= max_velocity_x) j.v_x %= max_velocity_x;
-        if (j.v_y >= max_velocity_y) j.v_y %= max_velocity_y;
+        if (j.v_x >= Constants.max_velocity_x) j.v_x %= Constants.max_velocity_x;
+        if (j.v_y >= Constants.max_velocity_y) j.v_y %= Constants.max_velocity_y;
 
         i.p_x = ip_x + i.v_x * (-t);
         i.p_y = ip_y + i.v_y * (-t);
