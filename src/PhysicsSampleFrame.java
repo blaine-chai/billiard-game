@@ -205,9 +205,9 @@ public class PhysicsSampleFrame extends GameFrame {
     	redballPref[0] = 5;
     	redballPref[1] = 5;
     	redballPref[2] = 5;
-    	opponentPref[0] = 5;
-    	opponentPref[1] = 5;
-    	opponentPref[2] = 5;
+    	opponentPref[0] = 0;
+    	opponentPref[1] = 0;
+    	opponentPref[2] = 0;
 
     	balls[0].setName(1);
     	balls[0].setSex(0);
@@ -293,6 +293,53 @@ public class PhysicsSampleFrame extends GameFrame {
                 balls[i].v_y = 0;
             }
 
+            for (int j = i + 1; j < balls.length; j++) {
+            	// 현재 플레이하는 공에 대해
+            	if(balls[i].myTurn == true) {
+            		int sex = balls[i].getSex();
+            		// 같은 성별이면 통과
+            		if (balls[j].getSex() == sex) continue;
+
+            		int preference = balls[j].getPreference(i) - 3;
+
+
+            		// 3점 이상 준 경우 호감, 인력 적용
+            		if(preference >= 0) {
+            			double displacement_xx = balls[j].p_x - balls[i].p_x;// - ball_width / 2;
+            			double displacement_yy = balls[j].p_y - balls[i].p_y;//- ball_height / 2;
+            			double squaredDistance1 = displacement_xx * displacement_xx + displacement_yy * displacement_yy;
+            			//double gravitation1 = coef_gravitation/1000 * interval / squaredDistance1;
+            			double gravitation1 = coef_gravitation * interval/50000000;
+            			
+            			if ( Math.sqrt(squaredDistance1) >= 150 ) continue;
+
+            			if (gravitation1 > max_gravitation)
+            				gravitation1 = max_gravitation;
+
+            			balls[i].a_x = gravitation1 * displacement_xx / Math.sqrt(squaredDistance1);
+            			balls[i].a_y = gravitation1 * displacement_yy / Math.sqrt(squaredDistance1);
+            		}
+            		// 3점 이하 준 경우 비호감, 척력 적용
+            		else {
+            			double displacement_xx = balls[j].p_x - balls[i].p_x;// - ball_width / 2;
+            			double displacement_yy = balls[j].p_y - balls[i].p_y;//- ball_height / 2;
+            			double squaredDistance1 = displacement_xx * displacement_xx + displacement_yy * displacement_yy;
+            			//double gravitation1 = coef_gravitation/1000 * interval / squaredDistance1;
+            			double repulsion = coef_repulsion * (timeStamp - startTime_pressing) / squaredDistance1;
+            			
+            			if ( Math.sqrt(squaredDistance1) >= 150 ) continue;
+
+
+            			if (repulsion > max_repulsion)
+            				repulsion = max_repulsion;
+
+            			balls[i].a_x = -100.0 * repulsion * displacement_xx / Math.sqrt(squaredDistance1);
+            			balls[i].a_y = -100.0 * repulsion * displacement_yy / Math.sqrt(squaredDistance1);
+            		}
+
+            	}
+            }
+
             //마우스 버튼을 누르고 있다면 인력 적용
             /*if (isGravitationRequested == true&&ball.equals(balls[0])ball.equals(balls[0])) {
                 double displacement_x = inputs.pos_mouseCursor.x - ball.p_x - ball_width / 2;
@@ -332,36 +379,6 @@ public class PhysicsSampleFrame extends GameFrame {
 
 
                 //System.out.println(balls[i].a_x + "," + balls[i].a_y);
-				for (int j = i + 1; j < balls.length; j++) {
-					// 현재 플레이하는 공에 대해
-					if(balls[i].myTurn == true) {
-						int sex = balls[i].getSex();
-						// 같은 성별이면 통과
-						if (balls[j].getSex() == sex) continue;
-						
-						int preference = balls[j].getPreference(i) - 3;
-						
-						
-						// 3점 이상 준 경우 호감, 인력 적용
-						if(preference >= 0) {
-							double displacement_xx = balls[i].p_x - balls[j].p_x - ball_width / 2;
-							double displacement_yy = balls[i].p_y - balls[j].p_y - ball_height / 2;
-							double squaredDistance1 = displacement_xx * displacement_xx + displacement_yy * displacement_yy;
-							double gravitation1 = coef_gravitation * interval / squaredDistance1;
-
-							if (gravitation1 > max_gravitation)
-								gravitation1 = max_gravitation;
-
-							balls[i].a_x = gravitation1 * displacement_x / Math.sqrt(squaredDistance1);
-							balls[i].a_y = gravitation1 * displacement_y / Math.sqrt(squaredDistance1);
-						}
-							// 3점 이하 준 경우 비호감, 척력 적용
-						else {
-							
-						}
-						
-					}
-				}
             }
 
 
@@ -477,7 +494,8 @@ public class PhysicsSampleFrame extends GameFrame {
 
                 for (int j = i + 1; j < balls.length; j++) {
                     if (calcCollision(balls[i], balls[j])
-                            && (balls[i].collideWith != j || balls[j].collideWith != i)) {
+//                            && (balls[i].collideWith != j || balls[j].collideWith != i)) {
+                    		){
                         balls[i].collideWith = j;
                         balls[j].collideWith = i;
                         //System.out.println(i + "," + j);
