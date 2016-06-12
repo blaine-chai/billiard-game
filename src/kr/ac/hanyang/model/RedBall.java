@@ -1,4 +1,4 @@
-package model;
+package kr.ac.hanyang.model;
 
 import loot.ImageResourceManager;
 

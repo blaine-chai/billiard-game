@@ -1,9 +1,11 @@
+package kr.ac.hanyang;
+
+import kr.ac.hanyang.Util.PhysicalUtil;
 import loot.GameFrame;
 import loot.GameFrameSettings;
-import loot.graphics.DrawableObject;
-import model.Ball;
-import model.RedBall;
-import values.Constants;
+import kr.ac.hanyang.model.Ball;
+import kr.ac.hanyang.model.RedBall;
+import kr.ac.hanyang.values.Constants;
 
 import java.awt.*;
 import java.awt.event.KeyEvent;
@@ -95,7 +97,7 @@ public class PhysicsSampleFrame extends GameFrame {
         for (int iBall = 1; iBall < balls.length; ++iBall)
             balls[iBall] = new Ball(rand.nextInt(settings.canvas_width - ball_width - 2) + 1, rand.nextInt(settings.canvas_height - ball_height - 2) + 1);
         */
-        
+
         balls[0] = new RedBall(400, 400, images);
         balls[1] = new Ball(455, 455, images);
         balls[2] = new Ball(0, 0, images);
@@ -107,32 +109,31 @@ public class PhysicsSampleFrame extends GameFrame {
 
         return true;
     }
-    
-    public void myInit()
-    {
-    	int redballPref[] = new int[3];
-    	int opponentPref[] = new int[3];
-    	redballPref[0] = 5;
-    	redballPref[1] = 5;
-    	redballPref[2] = 5;
-    	opponentPref[0] = 0;
-    	opponentPref[1] = 0;
-    	opponentPref[2] = 0;
 
-    	balls[0].setName(1);
-    	balls[0].setSex(0);
-    	balls[0].setPreference(redballPref);
+    public void myInit() {
+        int redballPref[] = new int[3];
+        int opponentPref[] = new int[3];
+        redballPref[0] = 5;
+        redballPref[1] = 5;
+        redballPref[2] = 5;
+        opponentPref[0] = 0;
+        opponentPref[1] = 0;
+        opponentPref[2] = 0;
 
-    	balls[1].setName(1);
-    	balls[1].setSex(1);
-    	balls[1].setPreference(opponentPref);
-    	
-    	balls[2].setName(2);
-    	balls[2].setSex(1);
-    	balls[2].setPreference(opponentPref);
+        balls[0].setName(1);
+        balls[0].setSex(0);
+        balls[0].setPreference(redballPref);
 
-    	balls[0].myTurn = true;
-    	
+        balls[1].setName(1);
+        balls[1].setSex(1);
+        balls[1].setPreference(opponentPref);
+
+        balls[2].setName(2);
+        balls[2].setSex(1);
+        balls[2].setPreference(opponentPref);
+
+        balls[0].myTurn = true;
+
     }
 
     @Override
@@ -204,50 +205,50 @@ public class PhysicsSampleFrame extends GameFrame {
             }
 
             for (int j = i + 1; j < balls.length; j++) {
-            	// 현재 플레이하는 공에 대해
-            	if(balls[i].myTurn == true) {
-            		int sex = balls[i].getSex();
-            		// 같은 성별이면 통과
-            		if (balls[j].getSex() == sex) continue;
+                // 현재 플레이하는 공에 대해
+                if (balls[i].myTurn == true) {
+                    int sex = balls[i].getSex();
+                    // 같은 성별이면 통과
+                    if (balls[j].getSex() == sex) continue;
 
-            		int preference = balls[j].getPreference(i) - 3;
-
-
-            		// 3점 이상 준 경우 호감, 인력 적용
-            		if(preference >= 0) {
-            			double displacement_xx = balls[j].p_x - balls[i].p_x;// - ball_width / 2;
-            			double displacement_yy = balls[j].p_y - balls[i].p_y;//- ball_height / 2;
-            			double squaredDistance1 = displacement_xx * displacement_xx + displacement_yy * displacement_yy;
-            			//double gravitation1 = coef_gravitation/1000 * interval / squaredDistance1;
-            			double gravitation1 = Constants.coef_gravitation * interval/50000000;
-            			
-            			if ( Math.sqrt(squaredDistance1) >= 150 ) continue;
-
-            			if (gravitation1 > Constants.max_gravitation)
-            				gravitation1 = Constants.max_gravitation;
-
-            			balls[i].a_x = gravitation1 * displacement_xx / Math.sqrt(squaredDistance1);
-            			balls[i].a_y = gravitation1 * displacement_yy / Math.sqrt(squaredDistance1);
-            		}
-            		// 3점 이하 준 경우 비호감, 척력 적용
-            		else {
-            			double displacement_xx = balls[j].p_x - balls[i].p_x;// - ball_width / 2;
-            			double displacement_yy = balls[j].p_y - balls[i].p_y;//- ball_height / 2;
-            			double squaredDistance1 = displacement_xx * displacement_xx + displacement_yy * displacement_yy;
-            			//double gravitation1 = coef_gravitation/1000 * interval / squaredDistance1;
-            			double repulsion = Constants.coef_repulsion * (timeStamp - startTime_pressing) / squaredDistance1;
-            			
-            			if ( Math.sqrt(squaredDistance1) >= 150 ) continue;
+                    int preference = balls[j].getPreference(i) - 3;
 
 
-            			if (repulsion > Constants.max_repulsion)
-            				repulsion = Constants.max_repulsion;
+                    // 3점 이상 준 경우 호감, 인력 적용
+                    if (preference >= 0) {
+                        double displacement_xx = balls[j].p_x - balls[i].p_x;// - ball_width / 2;
+                        double displacement_yy = balls[j].p_y - balls[i].p_y;//- ball_height / 2;
+                        double squaredDistance1 = displacement_xx * displacement_xx + displacement_yy * displacement_yy;
+                        //double gravitation1 = coef_gravitation/1000 * interval / squaredDistance1;
+                        double gravitation1 = Constants.coef_gravitation * interval / 50000000;
 
-            			balls[i].a_x = -100.0 * repulsion * displacement_xx / Math.sqrt(squaredDistance1);
-            			balls[i].a_y = -100.0 * repulsion * displacement_yy / Math.sqrt(squaredDistance1);
-            		}
+                        if (Math.sqrt(squaredDistance1) >= 150) continue;
 
-            	}
+                        if (gravitation1 > Constants.max_gravitation)
+                            gravitation1 = Constants.max_gravitation;
+
+                        balls[i].a_x = gravitation1 * displacement_xx / Math.sqrt(squaredDistance1);
+                        balls[i].a_y = gravitation1 * displacement_yy / Math.sqrt(squaredDistance1);
+                    }
+                    // 3점 이하 준 경우 비호감, 척력 적용
+                    else {
+                        double displacement_xx = balls[j].p_x - balls[i].p_x;// - ball_width / 2;
+                        double displacement_yy = balls[j].p_y - balls[i].p_y;//- ball_height / 2;
+                        double squaredDistance1 = displacement_xx * displacement_xx + displacement_yy * displacement_yy;
+                        //double gravitation1 = coef_gravitation/1000 * interval / squaredDistance1;
+                        double repulsion = Constants.coef_repulsion * (timeStamp - startTime_pressing) / squaredDistance1;
+
+                        if (Math.sqrt(squaredDistance1) >= 150) continue;
+
+
+                        if (repulsion > Constants.max_repulsion)
+                            repulsion = Constants.max_repulsion;
+
+                        balls[i].a_x = -100.0 * repulsion * displacement_xx / Math.sqrt(squaredDistance1);
+                        balls[i].a_y = -100.0 * repulsion * displacement_yy / Math.sqrt(squaredDistance1);
+                    }
+
+                }
             }
 
             //마우스 버튼을 누르고 있다면 인력 적용
@@ -309,7 +310,7 @@ public class PhysicsSampleFrame extends GameFrame {
             }*/
 
 			/*for (int j = i + 1; j < balls.length; j++) {
-				// 현재 플레이하는 공에 대해
+                // 현재 플레이하는 공에 대해
 				if(balls[i].myTurn == true) {
 					int sex = balls[i].getSex();
 					// 같은 성별이면 통과
@@ -403,14 +404,14 @@ public class PhysicsSampleFrame extends GameFrame {
 //                ball.y = (int) ball.p_y;
 
                 for (int j = i + 1; j < balls.length; j++) {
-                    if (calcCollision(balls[i], balls[j])
+                    if (PhysicalUtil.calcCollision(balls[i], balls[j])
 //                            && (balls[i].collideWith != j || balls[j].collideWith != i)) {
-                    		){
+                            ) {
                         balls[i].collideWith = j;
                         balls[j].collideWith = i;
                         //System.out.println(i + "," + j);
 //                        System.out.println(i + "," + j);
-                        fixOverlap(balls[i], balls[j], interval);
+                        PhysicalUtil.fixOverlap(balls[i], balls[j], interval);
                     }
                 }
 
@@ -446,81 +447,5 @@ public class PhysicsSampleFrame extends GameFrame {
         EndDraw();
     }
 
-    public boolean calcCollision(Ball i, Ball j) {
-        double dx = i.p_x - j.p_x;
-        double dy = i.p_y - j.p_y;
 
-        double d2 = dx * dx + dy * dy;
-        return d2 < Constants.ball_width * Constants.ball_width;
-    }
-
-    //수정이 필요함
-    public void fixOverlap(Ball i, Ball j, double interval) {
-        double dx = i.p_x - j.p_x;
-        double dy = i.p_y - j.p_y;
-        double ddx = i.v_x - j.v_x;
-        double ddy = i.v_y - j.v_y;
-
-        double root1, root2;
-        double t;
-
-        root1 = (-(dx * ddx + dy * ddy) + Math.sqrt((dx * ddx + dy * ddy) * (dx * ddx + dy * ddy) - ((ddx * ddx) + (ddy * ddy)) * (dx * dx + dy * dy - (double) Constants.ball_width * Constants.ball_width))) / ((ddx * ddx)  +  (ddy * ddy));
-
-        root2 = (-(dx * ddx + dy * ddy) - Math.sqrt(((dx * ddx + dy * ddy) * (dx * ddx + dy * ddy)) - (((ddx * ddx) + (ddy * ddy)) * (dx * dx + dy * dy - (double) Constants.ball_width * Constants.ball_width)))) / ((ddx * ddx) + (ddy * ddy));
-//        t = ((dx * ddx + dy * ddy) - Math.sqrt((dx * ddx + dy * ddy) * (dx * ddx + dy * ddy) - ((ddx * ddx) + (ddy * ddy)) * (dx * dx + dy * dy - (double) ball_width * ball_width))) / ((ddx * ddx) * (ddx * ddx) + (ddy * ddy) * (ddy * ddy));
-        //check if root is -interval < root1 && root1 < 0
-        if (ddx == 0 && ddy == 0) {
-            t = 0;
-//            System.out.println(0);
-        } else if (-interval < root1 && root1 < 0) {
-            t = root1;
-//            System.out.println(1);
-        } else if (-interval < root2 && root2 < 0) {
-            t = root2;
-//            System.out.println(2);
-        } else {
-            t = 0;
-//            System.out.println(3);
-        }
-
-//        System.out.println(i);
-//        System.out.println(j);
-//        System.out.println("root1: "+root1);
-//        System.out.println("root2: "+root2);
-//        System.out.println("distance:"+((ddx * ddx) * (ddx * ddx) + (ddy * ddy) * (ddy * ddy)));
-//        System.out.println("t: " + t);
-//        System.out.println("interval: "+interval);
-
-        double ip_x = i.p_x + t * i.v_x;
-        double ip_y = i.p_y + t * i.v_y;
-        double jp_x = j.p_x + t * j.v_x;
-        double jp_y = j.p_y + t * j.v_y;
-
-        dx = ip_x - jp_x;
-        dy = ip_y - jp_y;
-
-        double d2 = dx * dx + dy * dy;
-        double kii, kji, kij, kjj;
-        kji = (dx * i.v_x + dy * i.v_y) / d2; // k of j due to i
-        kii = (dx * i.v_y - dy * i.v_x) / d2; // k of i due to i
-        kij = (dx * j.v_x + dy * j.v_y) / d2; // k of i due to j
-        kjj = (dx * j.v_y - dy * j.v_x) / d2; // k of j due to j
-
-        // set velocity of i
-        i.v_y = kij * dy + kii * dx;
-        i.v_x = kij * dx - kii * dy;
-        if (i.v_x >= Constants.max_velocity_x) i.v_x %= Constants.max_velocity_x;
-        if (i.v_y >= Constants.max_velocity_y) i.v_y %= Constants.max_velocity_y;
-
-        // set velocity of j
-        j.v_y = kji * dy + kjj * dx;
-        j.v_x = kji * dx - kjj * dy;
-        if (j.v_x >= Constants.max_velocity_x) j.v_x %= Constants.max_velocity_x;
-        if (j.v_y >= Constants.max_velocity_y) j.v_y %= Constants.max_velocity_y;
-
-        i.p_x = ip_x + i.v_x * (-t);
-        i.p_y = ip_y + i.v_y * (-t);
-        j.p_x = jp_x + j.v_x * (-t);
-        j.p_y = jp_y + j.v_y * (-t);
-    }
 }

@@ -1,4 +1,4 @@
-package values;
+package kr.ac.hanyang.values;
 
 /**
  * Created by blainechai on 2016. 6. 9..

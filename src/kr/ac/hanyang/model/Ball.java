@@ -1,4 +1,4 @@
-package model;
+package kr.ac.hanyang.model;
 
 /**
  * Created by blainechai on 2016. 6. 9..
@@ -6,7 +6,7 @@ package model;
 
 import loot.ImageResourceManager;
 import loot.graphics.DrawableObject;
-import values.Constants;
+import kr.ac.hanyang.values.Constants;
 
 /**
  * '공' 하나를 표현하는 클래스입니다.<br>
