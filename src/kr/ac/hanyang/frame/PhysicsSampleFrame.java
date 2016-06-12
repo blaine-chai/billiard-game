@@ -66,6 +66,7 @@ public class PhysicsSampleFrame extends GameFrame {
 
     Ball[] balls = new Ball[Constants.numberOfBalls];                    //화면 내에 있는 공 목록
     Ball[] players = new Ball[Constants.numberOfBalls];
+    int turnNum;
     long startTime_pressing;                                //마우스 왼쪽 버튼을 누르기 시작한 시각
 
     long timeStamp_firstFrame = 0;                            //첫 프레임의 timeStamp -> 실행 이후로 경과된 시간 계산에 사용
@@ -113,13 +114,13 @@ public class PhysicsSampleFrame extends GameFrame {
 
         
         
-        balls[0] = new Ball(150, 200, "bin2", images);
-        balls[1] = new Ball(350, 200, "joongki2", images);
-        balls[2] = new Ball(550, 200, "minho2", images);
-        balls[3] = new Ball(150, 500, "sejung2", images);
-        balls[4] = new Ball(350, 500, "suji2", images);
-        balls[5] = new Ball(550, 500, "sulhyun2", images);
-        
+        balls[0] = new RedBall(350, 350, images);
+        balls[1] = new Ball(150, 200, "bin2", images);
+        balls[2] = new Ball(350, 200, "joongki2", images);
+        balls[3] = new Ball(550, 200, "minho2", images);
+        balls[4] = new Ball(150, 500, "sejung2", images);
+        balls[5] = new Ball(350, 500, "suji2", images);
+        balls[6] = new Ball(550, 500, "sulhyun2", images);
         
         myInit();
 
@@ -135,35 +136,62 @@ public class PhysicsSampleFrame extends GameFrame {
     }
 
     public void myInit() {
+    	turnNum = 1;
         int redballPref[] = new int[3];
         int opponentPref[] = new int[3];
-        int binPref[] = new int[3];
-        redballPref[0] = 5;
-        redballPref[1] = 5;
-        redballPref[2] = 5;
-        opponentPref[0] = 0;
-        opponentPref[1] = 0;
-        opponentPref[2] = 0;
+        int pref1[] = new int [3];
+        int pref2[] = new int [3];
+        int pref3[] = new int [3];
+
+        redballPref[0] = 1;
+        redballPref[1] = 1;
+        redballPref[2] = 1;
+        pref1[0] = 0;
+        pref1[1] = 0;
+        pref1[2] = 0;
+
+        pref2[0] = 1;
+        pref2[1] = 0;
+        pref2[2] = -1;
+
+        pref3[0] = -1;
+        pref3[1] = 0;
+        pref3[2] = 1;
         
 
-        balls[0].setName(1);
+        balls[0].setName("");
         balls[0].setSex(Constants.M);
         balls[0].setPreference(redballPref);
 
-        balls[1].setName(1);
+        balls[1].setName("bin");
         balls[1].setSex(Constants.M);
-        balls[1].setPreference(opponentPref);
+        balls[1].setPreference(pref1);
 
-        balls[2].setName(2);
-        balls[2].setSex(Constants.W);
-        balls[2].setPreference(opponentPref);
+        balls[2].setName("joongki");
+        balls[2].setSex(Constants.M);
+        balls[2].setPreference(pref2);
         
-        balls[3].setName(2);
-        balls[3].setSex(Constants.W);
-        balls[3].setPreference(opponentPref);
+        balls[3].setName("minho");
+        balls[3].setSex(Constants.M);
+        balls[3].setPreference(pref3);
+        
+        balls[4].setName("sejung");
+        balls[4].setSex(Constants.W);
+        balls[4].setPreference(pref3);
+
+        balls[5].setName("suji");
+        balls[5].setSex(Constants.W);
+        balls[5].setPreference(pref2);
+
+        
+        balls[6].setName("sulhyun");
+        balls[6].setSex(Constants.W);
+        balls[6].setPreference(pref1);
         
 
         balls[0].myTurn = true;
+        setBallInfo(turnNum);
+
 
     }
     
@@ -172,10 +200,21 @@ public class PhysicsSampleFrame extends GameFrame {
     	
     	// 모든 공에 대해 움직이는 공이 있는지 판단.
     	for( int i = 0; i < balls.length; i ++) {
-    		if ( balls[i].v_x > 0.001 || balls[i].v_y > 0.001 ) ret = false;
+    		if ( balls[i].v_x > 0.001 && balls[i].v_y > 0.001 ) ret = false;
     	}
     	
     	return ret;
+    }
+    
+    // 한 턴이 진행된 후 해당 플레이어의 정보를 수구에 적용.
+    public void setBallInfo(int turnNum) {
+    	int playerIndex = 0;
+
+    	playerIndex %= turnNum;
+    	
+		balls[0].setPreference( balls[playerIndex].getPreferenceAll()  );
+		balls[0].setSex( balls[playerIndex].getSex() );
+		balls[0].setName( balls[playerIndex].getName() );
     }
 
     @Override
@@ -208,8 +247,15 @@ public class PhysicsSampleFrame extends GameFrame {
 //        isGravitationRequested = inputs.buttons[2].isPressed;
 
         //이번 프레임에 마우스 버튼을 뗐다면 척력 적용
+        /// 이 함수에서 각 공의 allmyhit, collisioncount변수 초기화 필요.
         if (isAllStop() == true) {
+        	
+        	
+        	
+        	setBallInfo(turnNum);
 			isRepulsionRequested = inputs.buttons[2].IsReleasedNow();
+			turnNum++;
+			
         }
 //        isRepulsionRequested = inputs.buttons[2].isPressed;
 
@@ -261,7 +307,7 @@ public class PhysicsSampleFrame extends GameFrame {
 
 
                     // 3점 이상 준 경우 호감, 인력 적용
-                    if (preference >= 3) {
+                    if (preference >= 0) {
                         double displacement_xx = balls[j].p_x - balls[i].p_x;// - ball_width / 2;
                         double displacement_yy = balls[j].p_y - balls[i].p_y;//- ball_height / 2;
                         double squaredDistance1 = displacement_xx * displacement_xx + displacement_yy * displacement_yy;
@@ -392,6 +438,17 @@ public class PhysicsSampleFrame extends GameFrame {
 //                        balls[j].collideWith = i;
                         PhysicsUtil.fixOverlap(balls[i], balls[j], interval);
                     }
+
+					//현재 공이 수구이고 내 공과 충돌 시 유효 충돌.
+					if ( PhysicsUtil.calcCollision(balls[0], balls[j]) ) {
+						balls[j].hitMyBall = true;
+
+					}
+					
+					// 다른 성별의 공과 충돌 시 유효 충돌. 여기에서 맨 처음 맞춘 이성이 아니라면 무효처
+					if ( balls[i].hitMyBall == true ) {
+						balls[j].collisionCount++;
+					}
                 }
 
                 balls[i].x = (int) balls[i].p_x;

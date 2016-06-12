@@ -29,8 +29,10 @@ public class Ball extends DrawableObject {
     public double a_y;
     public int collideWith = Constants.COLLIDE_WITH_INIT;
     public int sex;
-    public int name;
+    public String name;
     public int preference[];
+    public int collisionCount;
+    public boolean hitMyBall;
     public boolean myTurn;
 
     public Ball(int x, int y, ImageResourceManager images) {
@@ -39,6 +41,8 @@ public class Ball extends DrawableObject {
         p_y = y;
         this.preference = new int[3];
         this.myTurn = false;
+        this.collisionCount = 0;
+        this.hitMyBall = false;
     }
 
     public Ball(int x, int y, String imageName, ImageResourceManager images) {
@@ -47,6 +51,7 @@ public class Ball extends DrawableObject {
         p_y = y;
         this.preference = new int[3];
         this.myTurn = false;
+        this.collisionCount = 0;
     }
 
     @Override
@@ -75,13 +80,17 @@ public class Ball extends DrawableObject {
     {
         return this.preference[opponentNum];
     }
-
-    public void setName(int nameNum)
-    {
-        this.name = nameNum;
+    
+    public int[] getPreferenceAll() {
+    	return this.preference;
     }
 
-    public int getName()
+    public void setName(String name)
+    {
+        this.name = name;
+    }
+
+    public String getName()
     {
         return this.name;
     }
