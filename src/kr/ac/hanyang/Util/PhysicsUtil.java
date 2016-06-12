@@ -1,4 +1,4 @@
-package kr.ac.hanyang.Util;
+package kr.ac.hanyang.util;
 
 import kr.ac.hanyang.model.Ball;
 import kr.ac.hanyang.values.Constants;

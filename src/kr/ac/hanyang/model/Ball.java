@@ -32,6 +32,7 @@ public class Ball extends DrawableObject {
     public int name;
     public int preference[];
     public boolean myTurn;
+    private boolean isMatched = false;
 
     public Ball(int x, int y, ImageResourceManager images) {
         super(x, y, Constants.ball_width, Constants.ball_height, images.GetImage("ball"));
@@ -45,7 +46,7 @@ public class Ball extends DrawableObject {
         super(x, y, Constants.ball_width, Constants.ball_height, images.GetImage(imageName));
         p_x = x;
         p_y = y;
-        this.preference = new int[3];
+        this.preference = new int[6];
         this.myTurn = false;
     }
 
@@ -54,36 +55,30 @@ public class Ball extends DrawableObject {
         return "p_x : " + p_x + "\n" + "p_y : " + p_y + "\n" + "v_x : " + v_x + "\n" + "v_y : " + v_y + "\n" + "a_y : " + a_y + "\n" + "a_y : " + a_y + "\n" + "x : " + x + "\n" + "y : " + y;
     }
 
-    public void setSex(int sex)
-    {
+    public void setSex(int sex) {
         this.sex = sex;
     }
 
-    public int getSex()
-    {
+    public int getSex() {
         return this.sex;
     }
 
-    public void setPreference(int preference[])
-    {
-        for(int i = 0; i < 3; i++) {
+    public void setPreference(int preference[]) {
+        for (int i = 0; i < 3; i++) {
             this.preference[i] = preference[i];
         }
     }
 
-    public int getPreference(int opponentNum)
-    {
+    public int getPreference(int opponentNum) {
         return this.preference[opponentNum];
     }
 
-    public void setName(int nameNum)
-    {
+    public void setName(int nameNum) {
         this.name = nameNum;
     }
 
-    public int getName()
-    {
+    public int getName() {
         return this.name;
     }
-    
+
 }

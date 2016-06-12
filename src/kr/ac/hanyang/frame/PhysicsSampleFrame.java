@@ -1,12 +1,11 @@
 package kr.ac.hanyang.frame;
 
 import kr.ac.hanyang.GameFrameManager;
-import kr.ac.hanyang.Util.PhysicsUtil;
+import kr.ac.hanyang.model.Ball;
+import kr.ac.hanyang.util.PhysicsUtil;
+import kr.ac.hanyang.values.Constants;
 import loot.GameFrame;
 import loot.GameFrameSettings;
-import kr.ac.hanyang.model.Ball;
-import kr.ac.hanyang.model.RedBall;
-import kr.ac.hanyang.values.Constants;
 import loot.ImageResourceManager;
 import loot.graphics.DrawableObject;
 
@@ -75,14 +74,21 @@ public class PhysicsSampleFrame extends GameFrame {
     long timeStamp_firstFrame = 0;                            //첫 프레임의 timeStamp -> 실행 이후로 경과된 시간 계산에 사용
     long timeStamp_lastFrame = 0;                            //직전 프레임의 timeStamp -> 물리량 계산에 사용
 
+    static int turn = -1;
+
+    Ball curTurnBall;
+
     GameFrameManager gm;
+
+    private int preference[][];
+
     /* -------------------------------------------
      *
 	 * 메서드 정의 부분
 	 * 
 	 */
 
-    public PhysicsSampleFrame(GameFrameSettings settings, GameFrameManager gm) {
+    public PhysicsSampleFrame(GameFrameSettings settings, GameFrameManager gm, int[][] preference) {
         super(settings);
         this.gm = gm;
         inputs.BindKey(KeyEvent.VK_SPACE, 0);                //스페이스 바를 누른 순간 모든 공의 속도가 0이 됨
@@ -93,11 +99,18 @@ public class PhysicsSampleFrame extends GameFrame {
         images.LoadImage("Images/ball2.png", "redball");
         images.LoadImage("Images/collide_effect.png", "collide_effect");
         images.LoadImage("Images/bin2.png", "bin2");
+        images.LoadImage("Images/joongki2.png", "joongki2");
+        images.LoadImage("Images/minho2.png", "minho2");
+        images.LoadImage("Images/sejung2.png", "sejung2");
+        images.LoadImage("Images/suji2.png", "suji2");
+        images.LoadImage("Images/sulhyun2.png", "sulhyun2");
+
+        this.preference = preference;
     }
 
     @Override
     public boolean Initialize() {
-        Random rand = new Random();
+//        Random rand = new Random();
 
         /*
         //각 공을 랜덤 위치에 배치
@@ -105,13 +118,17 @@ public class PhysicsSampleFrame extends GameFrame {
         for (int iBall = 1; iBall < balls.length; ++iBall)
             balls[iBall] = new Ball(rand.nextInt(settings.canvas_width - ball_width - 2) + 1, rand.nextInt(settings.canvas_height - ball_height - 2) + 1);
         */
+        // balls[0] = new RedBall(400, 400, images);
+        //balls[1] = new Ball(455, 455, images);
+        //balls[2] = new Ball(0, 0, images);
 
-        balls[0] = new RedBall(400, 400, images);
-        balls[1] = new Ball(455, 455, images);
-        balls[2] = new Ball(0, 0, images);
 
-
-        balls[3] = new Ball(300, 300, "bin2", images);
+        balls[0] = new Ball(150, 200, "bin2", images);
+        balls[1] = new Ball(350, 200, "joongki2", images);
+        balls[2] = new Ball(550, 200, "minho2", images);
+        balls[3] = new Ball(150, 500, "sejung2", images);
+        balls[4] = new Ball(350, 500, "suji2", images);
+        balls[5] = new Ball(550, 500, "sulhyun2", images);
 
 
         myInit();
@@ -130,6 +147,7 @@ public class PhysicsSampleFrame extends GameFrame {
     public void myInit() {
         int redballPref[] = new int[3];
         int opponentPref[] = new int[3];
+        int binPref[] = new int[3];
         redballPref[0] = 5;
         redballPref[1] = 5;
         redballPref[2] = 5;
@@ -137,24 +155,38 @@ public class PhysicsSampleFrame extends GameFrame {
         opponentPref[1] = 0;
         opponentPref[2] = 0;
 
+
         balls[0].setName(1);
-        balls[0].setSex(0);
+        balls[0].setSex(Constants.M);
         balls[0].setPreference(redballPref);
 
         balls[1].setName(1);
-        balls[1].setSex(1);
+        balls[1].setSex(Constants.M);
         balls[1].setPreference(opponentPref);
 
         balls[2].setName(2);
-        balls[2].setSex(1);
+        balls[2].setSex(Constants.W);
         balls[2].setPreference(opponentPref);
 
         balls[3].setName(2);
-        balls[3].setSex(1);
+        balls[3].setSex(Constants.W);
         balls[3].setPreference(opponentPref);
 
-        balls[0].myTurn = true;
 
+        balls[0].myTurn = true;
+        curTurnBall = balls[0];
+
+    }
+
+    public boolean isAllStop() {
+        boolean ret = true;
+
+        // 모든 공에 대해 움직이는 공이 있는지 판단.
+        for (int i = 0; i < balls.length; i++) {
+            if (balls[i].v_x > 0.001 || balls[i].v_y > 0.001) ret = false;
+        }
+
+        return ret;
     }
 
     @Override
@@ -169,8 +201,8 @@ public class PhysicsSampleFrame extends GameFrame {
         //각 버튼의 상태를 검사하여 각 공에 어떤 작업을 수행해야 하는지 체크
         boolean isStopRequested;
         boolean isPauseRequested;
-        boolean isGravitationRequested;
-        boolean isRepulsionRequested;
+//        boolean isGravitationRequested;
+        boolean isRepulsionRequested = false;
 
         //이번 프레임에 스페이스 바를 눌렀다면 모든 공의 속도를 0으로 만듦
         isStopRequested = inputs.buttons[0].IsPressedNow();
@@ -179,14 +211,24 @@ public class PhysicsSampleFrame extends GameFrame {
         isPauseRequested = inputs.buttons[1].isPressed;
 
         //이번 프레임에 마우스 버튼을 눌렀다면 현재 시각 기록 -> 척력 계산에 사용됨
-        if (inputs.buttons[2].IsPressedNow() == true)
-            startTime_pressing = timeStamp;
+//        if (inputs.buttons[2].IsPressedNow() == true)
+//            startTime_pressing = timeStamp;
 
         //마우스 버튼을 누르고 있다면 인력 적용
 //        isGravitationRequested = inputs.buttons[2].isPressed;
 
         //이번 프레임에 마우스 버튼을 뗐다면 척력 적용
-        isRepulsionRequested = inputs.buttons[2].IsReleasedNow();
+        if (isAllStop() == true && inputs.buttons[2].IsReleasedNow()) {
+            isRepulsionRequested = true;
+            turn++;
+            System.out.println(turn);
+            curTurnBall.myTurn = false;
+            curTurnBall = balls[turn % balls.length];
+
+            balls[turn % balls.length].myTurn = true;
+        } else {
+            isPauseRequested = false;
+        }
 //        isRepulsionRequested = inputs.buttons[2].isPressed;
 
 		/*
@@ -198,7 +240,7 @@ public class PhysicsSampleFrame extends GameFrame {
 
         //컨트롤 키를 누르고 있다면 굳이 인력 / 척력을 계산할 필요가 없으므로 해당 변수 재설정
         if (isPauseRequested == true) {
-            isGravitationRequested = false;
+//            isGravitationRequested = false;
             isRepulsionRequested = false;
         }
 
@@ -209,6 +251,7 @@ public class PhysicsSampleFrame extends GameFrame {
 		/*
          * 입력 적용
 		 */
+
 
         //지난 프레임 이후로 경과된 시간 측정
         double interval = timeStamp - timeStamp_lastFrame;
@@ -232,8 +275,8 @@ public class PhysicsSampleFrame extends GameFrame {
                     // 같은 성별이면 통과
                     if (balls[j].getSex() == sex) continue;
 
-                    int preference = balls[j].getPreference(i);
-
+//                    System.out.println(i + "," + j);
+                    int preference = balls[i].getPreference((j + 1) % 3);
 
                     // 3점 이상 준 경우 호감, 인력 적용
                     if (preference >= 3) {
@@ -243,37 +286,37 @@ public class PhysicsSampleFrame extends GameFrame {
                         //double gravitation1 = coef_gravitation/1000 * interval / squaredDistance1;
                         double gravitation1 = Constants.coef_gravitation * interval / 50000000;
 
-                        if (Math.sqrt(squaredDistance1) >= 200) continue;
+                        if (Math.sqrt(squaredDistance1) >= 150) continue;
 
                         if (gravitation1 > Constants.max_gravitation)
                             gravitation1 = Constants.max_gravitation;
 
-                        balls[i].a_x = gravitation1 * displacement_xx / Math.sqrt(squaredDistance1);
-                        balls[i].a_y = gravitation1 * displacement_yy / Math.sqrt(squaredDistance1);
+                        balls[i].a_x += gravitation1 * displacement_xx / Math.sqrt(squaredDistance1);
+                        balls[i].a_y += gravitation1 * displacement_yy / Math.sqrt(squaredDistance1);
                     }
                     // 3점 이하 준 경우 비호감, 척력 적용
-                    else {
+                    else if (preference <= -3) {
                         double displacement_xx = balls[j].p_x - balls[i].p_x;// - ball_width / 2;
                         double displacement_yy = balls[j].p_y - balls[i].p_y;//- ball_height / 2;
                         double squaredDistance1 = displacement_xx * displacement_xx + displacement_yy * displacement_yy;
                         //double gravitation1 = coef_gravitation/1000 * interval / squaredDistance1;
                         double repulsion = Constants.coef_repulsion * (timeStamp - startTime_pressing) / squaredDistance1;
 
-                        if (Math.sqrt(squaredDistance1) >= 200) continue;
+                        if (Math.sqrt(squaredDistance1) >= 150) continue;
 
 
                         if (repulsion > Constants.max_repulsion)
                             repulsion = Constants.max_repulsion;
 
-                        balls[i].a_x = -1.0 * repulsion * displacement_xx / Math.sqrt(squaredDistance1);
-                        balls[i].a_y = -1.0 * repulsion * displacement_yy / Math.sqrt(squaredDistance1);
+                        balls[i].a_x += -1.0 * repulsion * displacement_xx / Math.sqrt(squaredDistance1);
+                        balls[i].a_y += -1.0 * repulsion * displacement_yy / Math.sqrt(squaredDistance1);
                     }
 
                 }
             }
 
             //마우스 버튼을 뗄때 힘 적용
-            if (isRepulsionRequested == true && balls[i].equals(balls[0])) {
+            if (isRepulsionRequested == true && balls[i].myTurn) {
                 double displacement_x = inputs.pos_mouseCursor.x - balls[i].p_x - Constants.ball_width / 2;
                 double displacement_y = inputs.pos_mouseCursor.y - balls[i].p_y - Constants.ball_height / 2;
                 double squaredDistance = displacement_x * displacement_x + displacement_y * displacement_y;
@@ -350,9 +393,9 @@ public class PhysicsSampleFrame extends GameFrame {
 //                        balls[i].collideWith = Constants.numberOfBalls + 2;
                     }
 
-                    if (balls[i].p_y >= settings.canvas_height - Constants.ball_height) {
+                    if (balls[i].p_y >= Constants.TABLE_HEIGHT - Constants.ball_height) {
                         balls[i].v_y = -balls[i].v_y;
-                        balls[i].p_y = 2 * (settings.canvas_height - Constants.ball_height) - balls[i].p_y;
+                        balls[i].p_y = 2 * (Constants.TABLE_HEIGHT - Constants.ball_height) - balls[i].p_y;
                         isWithinCanvas = false;
 //                        balls[i].collideWith = Constants.numberOfBalls + 3;
                     }
@@ -377,6 +420,9 @@ public class PhysicsSampleFrame extends GameFrame {
                 balls[i].y = (int) balls[i].p_y;
             }
         }
+        if (isRepulsionRequested) {
+
+        }
 
 
         //이번이 첫 프레임이었다면 시작 시각 기록
@@ -400,7 +446,6 @@ public class PhysicsSampleFrame extends GameFrame {
         for (Ball ball : balls) {
             ball.Draw(g);
         }
-
         for (int i = 0; i < effectArrayList.size(); i++) {
             if (effectArrayList.get(i).disappearTime < timeStamp) {
                 effectArrayList.get(i).trigger_remove = true;
@@ -421,7 +466,7 @@ public class PhysicsSampleFrame extends GameFrame {
         public double disappearTime = 0;
 
         public CollideEffect(int x, int y, ImageResourceManager images, double disappearTime) {
-            super(x, y, Constants.ball_width, Constants.ball_height, images.GetImage("collide_effect"));
+            super(x, y, Constants.effect_width, Constants.effect_height, images.GetImage("collide_effect"));
             this.disappearTime = disappearTime;
         }
 
@@ -430,8 +475,5 @@ public class PhysicsSampleFrame extends GameFrame {
             return "p_x : " + x + "\n" + "p_y : " + y;
         }
 
-        void updateVisible() {
-            this.Draw(g);
-        }
     }
 }

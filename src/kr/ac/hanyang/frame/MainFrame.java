@@ -1,7 +1,6 @@
 package kr.ac.hanyang.frame;
 
 import kr.ac.hanyang.GameFrameManager;
-import kr.ac.hanyang.model.Ball;
 import loot.GameFrame;
 import loot.GameFrameSettings;
 import loot.InputManager;
@@ -82,8 +81,8 @@ public class MainFrame extends GameFrame {
 
         for (InputManager.ButtonState input : inputs.buttons)
             if (input.IsReleasedNow()) {
-                gm.endMainFrame();
-                gm.drawGameFrame();
+                gm.drawVoteFrame();
+                gm.endPrevFrame();
             }
         return true;
     }
