@@ -65,6 +65,7 @@ public class PhysicsSampleFrame extends GameFrame {
 	 */
 
     Ball[] balls = new Ball[Constants.numberOfBalls];                    //화면 내에 있는 공 목록
+    Ball[] players = new Ball[Constants.numberOfBalls];
     long startTime_pressing;                                //마우스 왼쪽 버튼을 누르기 시작한 시각
 
     long timeStamp_firstFrame = 0;                            //첫 프레임의 timeStamp -> 실행 이후로 경과된 시간 계산에 사용
@@ -86,6 +87,8 @@ public class PhysicsSampleFrame extends GameFrame {
 
         images.LoadImage("Images/ball_fixed.png", "ball");
         images.LoadImage("Images/ball2.png", "redball");
+        
+        images.LoadImage("Images/bin2.png", "bin2");
     }
 
     @Override
@@ -102,6 +105,11 @@ public class PhysicsSampleFrame extends GameFrame {
         balls[0] = new RedBall(400, 400, images);
         balls[1] = new Ball(455, 455, images);
         balls[2] = new Ball(0, 0, images);
+        
+        
+        balls[3] = new Ball(300, 300, "bin2", images);
+        
+        
         myInit();
 
         //FPS 출력에 사용할 색 및 글자체 가져오기
@@ -136,6 +144,10 @@ public class PhysicsSampleFrame extends GameFrame {
         balls[2].setName(2);
         balls[2].setSex(1);
         balls[2].setPreference(opponentPref);
+        
+        balls[3].setName(2);
+        balls[3].setSex(1);
+        balls[3].setPreference(opponentPref);
 
         balls[0].myTurn = true;
 
@@ -216,18 +228,18 @@ public class PhysicsSampleFrame extends GameFrame {
                     // 같은 성별이면 통과
                     if (balls[j].getSex() == sex) continue;
 
-                    int preference = balls[j].getPreference(i) - 3;
+                    int preference = balls[j].getPreference(i);
 
 
                     // 3점 이상 준 경우 호감, 인력 적용
-                    if (preference >= 0) {
+                    if (preference >= 3) {
                         double displacement_xx = balls[j].p_x - balls[i].p_x;// - ball_width / 2;
                         double displacement_yy = balls[j].p_y - balls[i].p_y;//- ball_height / 2;
                         double squaredDistance1 = displacement_xx * displacement_xx + displacement_yy * displacement_yy;
                         //double gravitation1 = coef_gravitation/1000 * interval / squaredDistance1;
                         double gravitation1 = Constants.coef_gravitation * interval / 50000000;
 
-                        if (Math.sqrt(squaredDistance1) >= 150) continue;
+                        if (Math.sqrt(squaredDistance1) >= 200) continue;
 
                         if (gravitation1 > Constants.max_gravitation)
                             gravitation1 = Constants.max_gravitation;
@@ -243,14 +255,14 @@ public class PhysicsSampleFrame extends GameFrame {
                         //double gravitation1 = coef_gravitation/1000 * interval / squaredDistance1;
                         double repulsion = Constants.coef_repulsion * (timeStamp - startTime_pressing) / squaredDistance1;
 
-                        if (Math.sqrt(squaredDistance1) >= 150) continue;
+                        if (Math.sqrt(squaredDistance1) >= 200) continue;
 
 
                         if (repulsion > Constants.max_repulsion)
                             repulsion = Constants.max_repulsion;
 
-                        balls[i].a_x = -100.0 * repulsion * displacement_xx / Math.sqrt(squaredDistance1);
-                        balls[i].a_y = -100.0 * repulsion * displacement_yy / Math.sqrt(squaredDistance1);
+                        balls[i].a_x = -1.0 * repulsion * displacement_xx / Math.sqrt(squaredDistance1);
+                        balls[i].a_y = -1.0 * repulsion * displacement_yy / Math.sqrt(squaredDistance1);
                     }
 
                 }

@@ -14,4 +14,16 @@
 	<natures>
 		<nature>org.eclipse.jdt.core.javanature</nature>
 	</natures>
+	<linkedResources>
+		<link>
+			<name>images/bin2.png</name>
+			<type>1</type>
+			<location>/Volumes/ZetDrive64/Eclipse Workspace/Meeting/images/bin2.png</location>
+		</link>
+		<link>
+			<name>images/sulhyun.png</name>
+			<type>1</type>
+			<location>/Volumes/ZetDrive64/Eclipse Workspace/Meeting/images/sulhyun.png</location>
+		</link>
+	</linkedResources>
 </projectDescription>

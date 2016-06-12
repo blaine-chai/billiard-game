@@ -85,5 +85,5 @@ public class Ball extends DrawableObject {
     {
         return this.name;
     }
-
+    
 }
