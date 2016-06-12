@@ -1,5 +1,6 @@
 package kr.ac.hanyang;
 
+import kr.ac.hanyang.frame.PhysicsSampleFrame;
 import loot.GameFrame;
 import loot.GameFrameSettings;
 

@@ -15,12 +15,11 @@ public class PhysicalUtil {
         return d2 < Constants.ball_width * Constants.ball_width;
     }
 
-    //수정이 필요함
     public static void fixOverlap(Ball ball1, Ball ball2, double interval) {
         recalculateBallState(ball1, ball2, calculateCollidedTime(ball1, ball2, interval));
     }
 
-    public static double calculateCollidedTime(Ball ball1, Ball ball2, double interval) {
+    private static double calculateCollidedTime(Ball ball1, Ball ball2, double interval) {
         double dx = ball1.p_x - ball2.p_x;
         double dy = ball1.p_y - ball2.p_y;
         double ddx = ball1.v_x - ball2.v_x;
@@ -44,7 +43,7 @@ public class PhysicalUtil {
         return t;
     }
 
-    public static void recalculateBallState(Ball ball1, Ball ball2, double t) {
+    private static void recalculateBallState(Ball ball1, Ball ball2, double t) {
         double ip_x = ball1.p_x + t * ball1.v_x;
         double ip_y = ball1.p_y + t * ball1.v_y;
         double jp_x = ball2.p_x + t * ball2.v_x;

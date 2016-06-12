@@ -1,4 +1,4 @@
-package kr.ac.hanyang;
+package kr.ac.hanyang.frame;
 
 import java.awt.Color;
 import java.awt.event.MouseEvent;

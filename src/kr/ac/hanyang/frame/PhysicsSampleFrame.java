@@ -1,4 +1,4 @@
-package kr.ac.hanyang;
+package kr.ac.hanyang.frame;
 
 import kr.ac.hanyang.Util.PhysicalUtil;
 import loot.GameFrame;
