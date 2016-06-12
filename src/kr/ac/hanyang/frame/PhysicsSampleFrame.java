@@ -89,6 +89,11 @@ public class PhysicsSampleFrame extends GameFrame {
         images.LoadImage("Images/ball2.png", "redball");
         
         images.LoadImage("Images/bin2.png", "bin2");
+        images.LoadImage("Images/joongki2.png", "joongki2");
+        images.LoadImage("Images/minho2.png", "minho2");
+        images.LoadImage("Images/sejung2.png", "sejung2");
+        images.LoadImage("Images/suji2.png", "suji2");
+        images.LoadImage("Images/sulhyun2.png", "sulhyun2");
     }
 
     @Override
@@ -102,12 +107,18 @@ public class PhysicsSampleFrame extends GameFrame {
             balls[iBall] = new Ball(rand.nextInt(settings.canvas_width - ball_width - 2) + 1, rand.nextInt(settings.canvas_height - ball_height - 2) + 1);
         */
 
-        balls[0] = new RedBall(400, 400, images);
-        balls[1] = new Ball(455, 455, images);
-        balls[2] = new Ball(0, 0, images);
+       // balls[0] = new RedBall(400, 400, images);
+        //balls[1] = new Ball(455, 455, images);
+        //balls[2] = new Ball(0, 0, images);
+
         
         
-        balls[3] = new Ball(300, 300, "bin2", images);
+        balls[0] = new Ball(150, 200, "bin2", images);
+        balls[1] = new Ball(350, 200, "joongki2", images);
+        balls[2] = new Ball(550, 200, "minho2", images);
+        balls[3] = new Ball(150, 500, "sejung2", images);
+        balls[4] = new Ball(350, 500, "suji2", images);
+        balls[5] = new Ball(550, 500, "sulhyun2", images);
         
         
         myInit();
@@ -126,31 +137,45 @@ public class PhysicsSampleFrame extends GameFrame {
     public void myInit() {
         int redballPref[] = new int[3];
         int opponentPref[] = new int[3];
+        int binPref[] = new int[3];
         redballPref[0] = 5;
         redballPref[1] = 5;
         redballPref[2] = 5;
         opponentPref[0] = 0;
         opponentPref[1] = 0;
         opponentPref[2] = 0;
+        
 
         balls[0].setName(1);
-        balls[0].setSex(0);
+        balls[0].setSex(Constants.M);
         balls[0].setPreference(redballPref);
 
         balls[1].setName(1);
-        balls[1].setSex(1);
+        balls[1].setSex(Constants.M);
         balls[1].setPreference(opponentPref);
 
         balls[2].setName(2);
-        balls[2].setSex(1);
+        balls[2].setSex(Constants.W);
         balls[2].setPreference(opponentPref);
         
         balls[3].setName(2);
-        balls[3].setSex(1);
+        balls[3].setSex(Constants.W);
         balls[3].setPreference(opponentPref);
+        
 
         balls[0].myTurn = true;
 
+    }
+    
+    public boolean isAllStop() {
+    	boolean ret = true;
+    	
+    	// 모든 공에 대해 움직이는 공이 있는지 판단.
+    	for( int i = 0; i < balls.length; i ++) {
+    		if ( balls[i].v_x > 0.001 || balls[i].v_y > 0.001 ) ret = false;
+    	}
+    	
+    	return ret;
     }
 
     @Override
@@ -166,7 +191,7 @@ public class PhysicsSampleFrame extends GameFrame {
         boolean isStopRequested;
         boolean isPauseRequested;
         boolean isGravitationRequested;
-        boolean isRepulsionRequested;
+        boolean isRepulsionRequested = false;
 
         //이번 프레임에 스페이스 바를 눌렀다면 모든 공의 속도를 0으로 만듦
         isStopRequested = inputs.buttons[0].IsPressedNow();
@@ -177,12 +202,15 @@ public class PhysicsSampleFrame extends GameFrame {
         //이번 프레임에 마우스 버튼을 눌렀다면 현재 시각 기록 -> 척력 계산에 사용됨
         if (inputs.buttons[2].IsPressedNow() == true)
             startTime_pressing = timeStamp;
+        
 
         //마우스 버튼을 누르고 있다면 인력 적용
 //        isGravitationRequested = inputs.buttons[2].isPressed;
 
         //이번 프레임에 마우스 버튼을 뗐다면 척력 적용
-        isRepulsionRequested = inputs.buttons[2].IsReleasedNow();
+        if (isAllStop() == true) {
+			isRepulsionRequested = inputs.buttons[2].IsReleasedNow();
+        }
 //        isRepulsionRequested = inputs.buttons[2].isPressed;
 
 		/*
@@ -205,6 +233,7 @@ public class PhysicsSampleFrame extends GameFrame {
 		/*
          * 입력 적용
 		 */
+        
 
         //지난 프레임 이후로 경과된 시간 측정
         double interval = timeStamp - timeStamp_lastFrame;
@@ -239,7 +268,7 @@ public class PhysicsSampleFrame extends GameFrame {
                         //double gravitation1 = coef_gravitation/1000 * interval / squaredDistance1;
                         double gravitation1 = Constants.coef_gravitation * interval / 50000000;
 
-                        if (Math.sqrt(squaredDistance1) >= 200) continue;
+                        if (Math.sqrt(squaredDistance1) >= 150) continue;
 
                         if (gravitation1 > Constants.max_gravitation)
                             gravitation1 = Constants.max_gravitation;
@@ -255,7 +284,7 @@ public class PhysicsSampleFrame extends GameFrame {
                         //double gravitation1 = coef_gravitation/1000 * interval / squaredDistance1;
                         double repulsion = Constants.coef_repulsion * (timeStamp - startTime_pressing) / squaredDistance1;
 
-                        if (Math.sqrt(squaredDistance1) >= 200) continue;
+                        if (Math.sqrt(squaredDistance1) >= 150) continue;
 
 
                         if (repulsion > Constants.max_repulsion)
@@ -387,8 +416,9 @@ public class PhysicsSampleFrame extends GameFrame {
         //화면을 다시 배경색으로 채움
         ClearScreen();
 
-        for (Ball ball : balls)
+        for (Ball ball : balls) {
             ball.Draw(g);
+        }
 
         DrawString(24, 48, "FPS:  %.2f", loop.GetFPS());
         DrawString(24, 78, "Time: %dms", (int) (timeStamp_lastFrame - timeStamp_firstFrame));
