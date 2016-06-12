@@ -21,7 +21,7 @@ import java.util.Random;
  * @author Racin
  */
 @SuppressWarnings("serial")
-public class PhysicsSampleFrame extends GameFrame {
+public class PhysicsFrame extends GameFrame {
     /*
      * 조작:
 	 * 
@@ -88,7 +88,7 @@ public class PhysicsSampleFrame extends GameFrame {
 	 * 
 	 */
 
-    public PhysicsSampleFrame(GameFrameSettings settings, GameFrameManager gm, int[][] preference) {
+    public PhysicsFrame(GameFrameSettings settings, GameFrameManager gm, int[][] preference) {
         super(settings);
         this.gm = gm;
         inputs.BindKey(KeyEvent.VK_SPACE, 0);                //스페이스 바를 누른 순간 모든 공의 속도가 0이 됨

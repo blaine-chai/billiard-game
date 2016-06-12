@@ -85,7 +85,7 @@ public class VoteFrame extends GameFrame {
                 if (turn < 5)
                     turn++;
                 else {
-                    gm.drawGameFrame();
+                    gm.drawGameFrame(preference);
                     gm.endPrevFrame();
                 }
 

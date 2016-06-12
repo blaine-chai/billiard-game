@@ -1,7 +1,7 @@
 package kr.ac.hanyang;
 
 import kr.ac.hanyang.frame.MainFrame;
-import kr.ac.hanyang.frame.PhysicsSampleFrame;
+import kr.ac.hanyang.frame.PhysicsFrame;
 import kr.ac.hanyang.frame.VoteFrame;
 import loot.GameFrame;
 import loot.GameFrameSettings;
@@ -24,9 +24,9 @@ public class GameFrameManager {
         settings.numberOfButtons = 6;
     }
 
-    public void drawGameFrame() {
+    public void drawGameFrame(int[][] preference) {
         preWindow = window;
-        window = new PhysicsSampleFrame(settings, this);
+        window = new PhysicsFrame(settings, this, preference);
         window.setVisible(true);
 //        drawVoteFrame();
     }
