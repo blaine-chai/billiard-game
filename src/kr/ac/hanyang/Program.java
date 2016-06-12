@@ -7,7 +7,7 @@ import loot.GameFrameSettings;
 public class Program {
 
     public static void main(String[] args) {
-        int mode = 0;
+       /* int mode = 0;
         GameFrameSettings settings = new GameFrameSettings();
         settings.window_title = "Meeting";
         settings.canvas_width = 800;
@@ -21,6 +21,11 @@ public class Program {
         settings.numberOfButtons = 3;
 
         GameFrame window = new PhysicsSampleFrame(settings);
-        window.setVisible(true);
+        window.setVisible(true);*/
+
+        GameFrameManager manager = new GameFrameManager();
+
+        manager.drawMainFrame();
+//        manager.drawGameFrame();
     }
 }

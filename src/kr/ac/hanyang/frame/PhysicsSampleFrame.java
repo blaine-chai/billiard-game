@@ -1,6 +1,7 @@
 package kr.ac.hanyang.frame;
 
-import kr.ac.hanyang.Util.PhysicalUtil;
+import kr.ac.hanyang.GameFrameManager;
+import kr.ac.hanyang.Util.PhysicsUtil;
 import loot.GameFrame;
 import loot.GameFrameSettings;
 import kr.ac.hanyang.model.Ball;
@@ -69,16 +70,16 @@ public class PhysicsSampleFrame extends GameFrame {
     long timeStamp_firstFrame = 0;                            //첫 프레임의 timeStamp -> 실행 이후로 경과된 시간 계산에 사용
     long timeStamp_lastFrame = 0;                            //직전 프레임의 timeStamp -> 물리량 계산에 사용
 
-	
-	/* -------------------------------------------
+    GameFrameManager gm;
+    /* -------------------------------------------
      *
 	 * 메서드 정의 부분
 	 * 
 	 */
 
-    public PhysicsSampleFrame(GameFrameSettings settings) {
+    public PhysicsSampleFrame(GameFrameSettings settings, GameFrameManager gm) {
         super(settings);
-
+        this.gm = gm;
         inputs.BindKey(KeyEvent.VK_SPACE, 0);                //스페이스 바를 누른 순간 모든 공의 속도가 0이 됨
         inputs.BindKey(KeyEvent.VK_CONTROL, 1);                //컨트롤 키를 누르는 동안 모든 공의 속도 / 가속도가 일시적으로 0이 됨
         inputs.BindMouseButton(MouseEvent.BUTTON1, 2);        //마우스 왼쪽 버튼을 누르는 동안 인력 작용, 떼는 순간 척력 작용
@@ -106,6 +107,10 @@ public class PhysicsSampleFrame extends GameFrame {
         //FPS 출력에 사용할 색 및 글자체 가져오기
         LoadColor(Color.black);
         LoadFont("돋움체 BOLD 24");
+
+        LoadColor(Color.black);
+        LoadFont("돋움체 BOLD 24");
+        LoadFont("맑은고딕 BOLD 24");
 
         return true;
     }
@@ -251,20 +256,6 @@ public class PhysicsSampleFrame extends GameFrame {
                 }
             }
 
-            //마우스 버튼을 누르고 있다면 인력 적용
-            /*if (isGravitationRequested == true&&ball.equals(balls[0])ball.equals(balls[0])) {
-                double displacement_x = inputs.pos_mouseCursor.x - ball.p_x - ball_width / 2;
-                double displacement_y = inputs.pos_mouseCursor.y - ball.p_y - ball_height / 2;
-                double squaredDistance = displacement_x * displacement_x + displacement_y * displacement_y;
-                double gravitation = coef_gravitation * interval / squaredDistance;
-
-                if (gravitation > max_gravitation)
-                    gravitation = max_gravitation;
-
-                ball.a_x = gravitation * displacement_x / Math.sqrt(squaredDistance);
-                ball.a_y = gravitation * displacement_y / Math.sqrt(squaredDistance);
-            }*/
-
             //마우스 버튼을 뗄때 힘 적용
             if (isRepulsionRequested == true && balls[i].equals(balls[0])) {
                 double displacement_x = inputs.pos_mouseCursor.x - balls[i].p_x - Constants.ball_width / 2;
@@ -292,53 +283,6 @@ public class PhysicsSampleFrame extends GameFrame {
                 //System.out.println(balls[i].a_x + "," + balls[i].a_y);
             }
 
-
-            //이번 프레임에 마우스 버튼을 뗐다면 척력 적용
-            /*if (isRepulsionRequested == true && ball.equals(balls[0])) {
-                double displacement_x = inputs.pos_mouseCursor.x - ball.p_x - ball_width / 2;
-                double displacement_y = inputs.pos_mouseCursor.y - ball.p_y - ball_height / 2;
-                double squaredDistance = displacement_x * displacement_x + displacement_y * displacement_y;
-                double repulsion = coef_repulsion * (timeStamp - startTime_pressing) / squaredDistance;
-
-                if (repulsion > max_repulsion)
-                    repulsion = max_repulsion;
-
-//                ball.a_x = -1.0 * repulsion * displacement_x / Math.sqrt(squaredDistance);
-                ball.a_x = -100.0 * repulsion * displacement_x / Math.sqrt(squaredDistance);
-//                ball.a_y = -1.0 * repulsion * displacement_y / Math.sqrt(squaredDistance);
-                ball.a_y = -100.0 * repulsion * displacement_y / Math.sqrt(squaredDistance);
-            }*/
-
-			/*for (int j = i + 1; j < balls.length; j++) {
-                // 현재 플레이하는 공에 대해
-				if(balls[i].myTurn == true) {
-					int sex = balls[i].getSex();
-					// 같은 성별이면 통과
-					if (balls[j].getSex() == sex) continue;
-					
-					int preference = balls[j].getPreference(i) - 3;
-					
-					
-					// 3점 이상 준 경우 호감, 인력 적용
-					if(preference >= 0) {
-						double displacement_x = balls[i].p_x - balls[j].p_x - ball_width / 2;
-						double displacement_y = balls[i].p_y - balls[j].p_y - ball_height / 2;
-						double squaredDistance = displacement_x * displacement_x + displacement_y * displacement_y;
-						double gravitation = coef_gravitation * interval / squaredDistance;
-
-						if (gravitation > max_gravitation)
-							gravitation = max_gravitation;
-
-						balls[i].a_x = gravitation * displacement_x / Math.sqrt(squaredDistance);
-						balls[i].a_y = gravitation * displacement_y / Math.sqrt(squaredDistance);
-					}
-						// 3점 이하 준 경우 비호감, 척력 적용
-					else {
-						
-					}
-					
-				}
-			}*/
 
             //컨트롤 키가 눌려 있지 않다면 속도 / 가속도 반영
             if (isPauseRequested == false) {
@@ -373,45 +317,39 @@ public class PhysicsSampleFrame extends GameFrame {
                         balls[i].v_x = -balls[i].v_x;
                         balls[i].p_x = -balls[i].p_x;
                         isWithinCanvas = false;
-                        balls[i].collideWith = Constants.numberOfBalls;
+//                        balls[i].collideWith = Constants.numberOfBalls;
                     }
 
                     if (balls[i].p_x >= settings.canvas_width - Constants.ball_width) {
                         balls[i].v_x = -balls[i].v_x;
                         balls[i].p_x = 2 * (settings.canvas_width - Constants.ball_width) - balls[i].p_x;
                         isWithinCanvas = false;
-                        balls[i].collideWith = Constants.numberOfBalls + 1;
+//                        balls[i].collideWith = Constants.numberOfBalls + 1;
                     }
 
                     if (balls[i].p_y < 0) {
                         balls[i].v_y = -balls[i].v_y;
                         balls[i].p_y = -balls[i].p_y;
                         isWithinCanvas = false;
-                        balls[i].collideWith = Constants.numberOfBalls + 2;
+//                        balls[i].collideWith = Constants.numberOfBalls + 2;
                     }
 
                     if (balls[i].p_y >= settings.canvas_height - Constants.ball_height) {
                         balls[i].v_y = -balls[i].v_y;
                         balls[i].p_y = 2 * (settings.canvas_height - Constants.ball_height) - balls[i].p_y;
                         isWithinCanvas = false;
-                        balls[i].collideWith = Constants.numberOfBalls + 3;
+//                        balls[i].collideWith = Constants.numberOfBalls + 3;
                     }
                 }
                 while (isWithinCanvas == false);
 
-                //마지막으로, 공의 위치를 기반으로 해당 공을 그릴 픽셀값 설정
-//                ball.x = (int) ball.p_x;
-//                ball.y = (int) ball.p_y;
-
                 for (int j = i + 1; j < balls.length; j++) {
-                    if (PhysicalUtil.calcCollision(balls[i], balls[j])
+                    if (PhysicsUtil.calcCollision(balls[i], balls[j])
 //                            && (balls[i].collideWith != j || balls[j].collideWith != i)) {
                             ) {
-                        balls[i].collideWith = j;
-                        balls[j].collideWith = i;
-                        //System.out.println(i + "," + j);
-//                        System.out.println(i + "," + j);
-                        PhysicalUtil.fixOverlap(balls[i], balls[j], interval);
+//                        balls[i].collideWith = j;
+//                        balls[j].collideWith = i;
+                        PhysicsUtil.fixOverlap(balls[i], balls[j], interval);
                     }
                 }
 
