@@ -7,10 +7,13 @@ import loot.GameFrameSettings;
 import kr.ac.hanyang.model.Ball;
 import kr.ac.hanyang.model.RedBall;
 import kr.ac.hanyang.values.Constants;
+import loot.ImageResourceManager;
+import loot.graphics.DrawableObject;
 
 import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
+import java.util.ArrayList;
 import java.util.Random;
 
 /**
@@ -64,6 +67,7 @@ public class PhysicsSampleFrame extends GameFrame {
 	 * 
 	 */
 
+    ArrayList<CollideEffect> effectArrayList = new ArrayList<>();
     Ball[] balls = new Ball[Constants.numberOfBalls];                    //화면 내에 있는 공 목록
     Ball[] players = new Ball[Constants.numberOfBalls];
     long startTime_pressing;                                //마우스 왼쪽 버튼을 누르기 시작한 시각
@@ -87,7 +91,7 @@ public class PhysicsSampleFrame extends GameFrame {
 
         images.LoadImage("Images/ball_fixed.png", "ball");
         images.LoadImage("Images/ball2.png", "redball");
-        
+        images.LoadImage("Images/collide_effect.png", "collide_effect");
         images.LoadImage("Images/bin2.png", "bin2");
     }
 
@@ -105,11 +109,11 @@ public class PhysicsSampleFrame extends GameFrame {
         balls[0] = new RedBall(400, 400, images);
         balls[1] = new Ball(455, 455, images);
         balls[2] = new Ball(0, 0, images);
-        
-        
+
+
         balls[3] = new Ball(300, 300, "bin2", images);
-        
-        
+
+
         myInit();
 
         //FPS 출력에 사용할 색 및 글자체 가져오기
@@ -144,7 +148,7 @@ public class PhysicsSampleFrame extends GameFrame {
         balls[2].setName(2);
         balls[2].setSex(1);
         balls[2].setPreference(opponentPref);
-        
+
         balls[3].setName(2);
         balls[3].setSex(1);
         balls[3].setPreference(opponentPref);
@@ -356,9 +360,13 @@ public class PhysicsSampleFrame extends GameFrame {
                 while (isWithinCanvas == false);
 
                 for (int j = i + 1; j < balls.length; j++) {
-                    if (PhysicsUtil.calcCollision(balls[i], balls[j])
+                    if (PhysicsUtil.isCollide(balls[i], balls[j])
 //                            && (balls[i].collideWith != j || balls[j].collideWith != i)) {
                             ) {
+//                        SetFont("맑은고딕 BOLD 70");
+//                        DrawString(120, 300, "Couple Manger");
+                        effectArrayList.add(new CollideEffect((balls[i].x + balls[j].x) / 2, (balls[i].y + balls[j].y) / 2, images, timeStamp + 300));
+//                        effectArrayList.get(effectArrayList.size() - 1).Draw(g);
 //                        balls[i].collideWith = j;
 //                        balls[j].collideWith = i;
                         PhysicsUtil.fixOverlap(balls[i], balls[j], interval);
@@ -369,6 +377,8 @@ public class PhysicsSampleFrame extends GameFrame {
                 balls[i].y = (int) balls[i].p_y;
             }
         }
+
+
         //이번이 첫 프레임이었다면 시작 시각 기록
         if (timeStamp_firstFrame == 0)
             timeStamp_firstFrame = timeStamp;
@@ -387,8 +397,17 @@ public class PhysicsSampleFrame extends GameFrame {
         //화면을 다시 배경색으로 채움
         ClearScreen();
 
-        for (Ball ball : balls)
+        for (Ball ball : balls) {
             ball.Draw(g);
+        }
+
+        for (int i = 0; i < effectArrayList.size(); i++) {
+            if (effectArrayList.get(i).disappearTime < timeStamp) {
+                effectArrayList.get(i).trigger_remove = true;
+                effectArrayList.remove(i);
+            } else
+                effectArrayList.get(i).Draw(g);
+        }
 
         DrawString(24, 48, "FPS:  %.2f", loop.GetFPS());
         DrawString(24, 78, "Time: %dms", (int) (timeStamp_lastFrame - timeStamp_firstFrame));
@@ -397,5 +416,22 @@ public class PhysicsSampleFrame extends GameFrame {
         EndDraw();
     }
 
+    class CollideEffect extends DrawableObject {
 
+        public double disappearTime = 0;
+
+        public CollideEffect(int x, int y, ImageResourceManager images, double disappearTime) {
+            super(x, y, Constants.ball_width, Constants.ball_height, images.GetImage("collide_effect"));
+            this.disappearTime = disappearTime;
+        }
+
+        @Override
+        public String toString() {
+            return "p_x : " + x + "\n" + "p_y : " + y;
+        }
+
+        void updateVisible() {
+            this.Draw(g);
+        }
+    }
 }

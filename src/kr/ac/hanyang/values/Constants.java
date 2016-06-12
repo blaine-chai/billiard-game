@@ -8,6 +8,8 @@ public class Constants {
     public static final int numberOfBalls = 4;                //화면 내에 있는 공의 수(너무 많으면 FPS 저하의 원인이 됨)
     public static final int ball_width = 50;                    //공 하나의 가로 길이(단위는 픽셀)
     public static final int ball_height = 50;                    //공 하나의 세로 길이(단위는 픽셀)
+    public static final int effect_width = 50;                    //공 하나의 세로 길이(단위는 픽셀)
+    public static final int effect_height = 50;                    //공 하나의 세로 길이(단위는 픽셀)
 
     public static final double max_hit_force = 1;            //인력의 최대값(단위는 픽셀/ms^2)
     public static final double max_gravitation = 10;            //인력의 최대값(단위는 픽셀/ms^2)
