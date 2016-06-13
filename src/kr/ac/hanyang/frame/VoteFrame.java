@@ -26,7 +26,6 @@ public class VoteFrame extends GameFrame {
         for (int i = 0; i < preference.length; i++) {
             for (int j = 0; j < preference[0].length; j++) {
                 preference[i][j] = -1;
-                System.out.println(j);
             }
         }
     }
@@ -81,10 +80,14 @@ public class VoteFrame extends GameFrame {
                     System.out.println();
                 }
             } else if (i == 9 && preference[turn][0] >= 0 && preference[turn][1] >= 0 && preference[turn][2] >= 0) {
-                System.out.println(turn);
                 if (turn < 5)
                     turn++;
                 else {
+                    for (i = 0; i < preference.length; i++) {
+                        for (int j = 0; j < preference[0].length; j++) {
+                            preference[i][j] -= 1;
+                        }
+                    }
                     gm.drawGameFrame(preference);
                     gm.endPrevFrame();
                 }

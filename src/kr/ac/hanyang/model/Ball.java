@@ -8,6 +8,8 @@ import loot.ImageResourceManager;
 import loot.graphics.DrawableObject;
 import kr.ac.hanyang.values.Constants;
 
+import java.util.*;
+
 /**
  * '공' 하나를 표현하는 클래스입니다.<br>
  * LOOT 라이브러리에 있는 DrawableObject class를 상속받아<br>
@@ -21,18 +23,20 @@ import kr.ac.hanyang.values.Constants;
  * @author Racin
  */
 public class Ball extends DrawableObject {
+    public int id;
+    public static int idx = 0;
     public double p_x;
     public double p_y;
     public double v_x;
     public double v_y;
     public double a_x;
     public double a_y;
-    public int collideWith = Constants.COLLIDE_WITH_INIT;
+    public TreeSet<Integer> collideWithSet = new TreeSet<>();
     public int sex;
     public int name;
     public int preference[];
     public boolean myTurn;
-    private boolean isMatched = false;
+    private int matchedWith = 0;
 
     public Ball(int x, int y, ImageResourceManager images) {
         super(x, y, Constants.ball_width, Constants.ball_height, images.GetImage("ball"));
@@ -48,6 +52,8 @@ public class Ball extends DrawableObject {
         p_y = y;
         this.preference = new int[6];
         this.myTurn = false;
+        id = idx;
+        idx++;
     }
 
     @Override
@@ -81,4 +87,16 @@ public class Ball extends DrawableObject {
         return this.name;
     }
 
+    public int getMatchedWith() {
+        return matchedWith;
+    }
+
+    public void setMatchedWith(int matchedWith) {
+        this.matchedWith = matchedWith;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        return id == ((Ball) obj).id;
+    }
 }

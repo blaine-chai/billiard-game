@@ -81,8 +81,10 @@ public class MainFrame extends GameFrame {
 
         for (InputManager.ButtonState input : inputs.buttons)
             if (input.IsReleasedNow()) {
-                gm.drawVoteFrame();
+                gm.drawGameFrame(new int[6][3]);
                 gm.endPrevFrame();
+//                gm.drawVoteFrame();
+//                gm.endPrevFrame();
             }
         return true;
     }
