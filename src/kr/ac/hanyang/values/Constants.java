@@ -26,6 +26,7 @@ public class Constants {
 
     public static final int COLLIDE_WITH_INIT = Integer.MAX_VALUE;
 
+    public static final int MATCHING_BALL = -1;
     public static final int M = 0;
     public static final int W = 1;
 

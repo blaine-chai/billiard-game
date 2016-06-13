@@ -77,6 +77,7 @@ public class PhysicsFrame extends GameFrame {
 
     GameFrameManager gm;
     DrawableObject footer;
+    DrawableObject curBall;
 
     private int preference[][];
 
@@ -169,27 +170,39 @@ public class PhysicsFrame extends GameFrame {
 //        opponentPref[1] = 0;
 //        opponentPref[2] = 0;
 
+        int[] init = {0, 0, 0};
 
         balls[0].setName(1);
-        balls[0].setSex(Constants.M);
-        balls[0].setPreference(redballPref);
+        balls[0].setSex(Constants.MATCHING_BALL);
+        balls[0].setPreference(init);
 
-        balls[1].setName(1);
-        balls[1].setSex(Constants.M);
-        balls[1].setPreference(opponentPref);
-
-        balls[2].setName(2);
-        balls[2].setSex(Constants.W);
-        balls[2].setPreference(opponentPref);
-
-        balls[3].setName(2);
-        balls[3].setSex(Constants.W);
-        balls[3].setPreference(opponentPref);
+        for (int i = 1; i < 4; i++) {
+            balls[i].setMatchedWith(i);
+            balls[i].setSex(Constants.M);
+            balls[i].setPreference(preference[i-1]);
+        }
+        for (int i = 4; i < 7; i++) {
+            balls[i].setMatchedWith(i);
+            balls[i].setSex(Constants.W);
+            balls[i].setPreference(preference[i-1]);
+        }
+//        balls[1].setName(1);
+//        balls[1].setSex(Constants.M);
+//        balls[1].setPreference(opponentPref);
+//
+//        balls[2].setName(2);
+//        balls[2].setSex(Constants.W);
+//        balls[2].setPreference(opponentPref);
+//
+//        balls[3].setName(2);
+//        balls[3].setSex(Constants.W);
+//        balls[3].setPreference(opponentPref);
 
 
         balls[0].myTurn = false;
         curTurnBall = balls[1];
 
+        curBall = new DrawableObject(375,750,Constants.ball_width, Constants.ball_height,curTurnBall.image);
     }
 
     public boolean isAllStop() {
@@ -223,52 +236,72 @@ public class PhysicsFrame extends GameFrame {
         //컨트롤 키를 누르고 있다면 모든 공의 속도 및 가속도를 일시적으로 0으로 만듦
         isPauseRequested = inputs.buttons[1].isPressed;
 //        System.out.println(playBalls.size());
-        if (isAllStop() && curTurnBall != null && curTurnBall.collideWithSet.size() == 2) {
+        if (isAllStop() || isPauseRequested) {
+            if (curTurnBall != null && curTurnBall.collideWithSet.size() == 2) {
 //            System.out.println(curTurnBall.getName());
-            Iterator<Integer> it = curTurnBall.collideWithSet.iterator();
-            it.next();
-            int i = it.next();
+                Iterator<Integer> it = curTurnBall.collideWithSet.iterator();
+                it.next();
+                int i = it.next();
 
-            if (curTurnBall.collideWithSet.contains(0)) {
+                if (curTurnBall.collideWithSet.contains(0)) {
 //                System.out.println(curTurnBall.collideWithSet.toArray().length);
-                Ball matchedBall = null;
-                for(int j =0;j<playBalls.size();j++){
-                    if(playBalls.get(j).id == i){
-                        matchedBall = playBalls.get(j);
+                    Ball matchedBall = null;
+                    for (int j = 0; j < playBalls.size(); j++) {
+                        if (playBalls.get(j).id == i) {
+                            matchedBall = playBalls.get(j);
+                        }
                     }
-                }
-                matchedBalls.add(new MatchedBall(curTurnBall, matchedBall));
-                playBalls.remove(curTurnBall);
-                playBalls.remove(matchedBall);
+                    MatchedBall matchedBall1 = new MatchedBall(curTurnBall, matchedBall);
+                    System.out.println(matchedBall1.b1);
+                    System.out.println(matchedBall1.b2);
+                    matchedBalls.add(matchedBall1);
+                    playBalls.remove(curTurnBall);
+                    playBalls.remove(matchedBall);
 //                System.out.println(playBalls.size());
 //                System.out.println(playBalls.remove(playBalls.get((Integer) curTurnBall.collideWithSet.toArray()[1])));
 //                System.out.println(playBalls.remove(curTurnBall));
 //                System.out.println(playBalls.size());
 //                System.out.println(matchedBalls.size());
-                curTurnBall.myTurn = false;
+                    curTurnBall.myTurn = false;
+                    curTurnBall = null;
 
-                System.out.println("hi");
+                    if (playBalls.indexOf(curTurnBall) < i) {
+                        turn = (turn - 1) % playBalls.size();
+                    } else {
+                        turn = (turn - 2) % playBalls.size();
+                    }
+                    if (turn == 0) {
+                        turn--;
+                    }
+                    turn %= playBalls.size();
+                    curTurnBall = playBalls.get(turn);
+
+                    System.out.println("hi");
+                    for (Ball ball : playBalls) {
+                        ball.collideWithSet.clear();
+                    }
+                }
+            } else if (inputs.buttons[2].IsReleasedNow()) {
+                isRepulsionRequested = true;
+                System.out.println(turn);
+                turn = (turn + 1) % playBalls.size();
+                if (turn == 0) {
+                    turn++;
+                }
+                curTurnBall.myTurn = false;
+                curTurnBall = playBalls.get(turn % (playBalls.size()));
+//                System.out.println(curTurnBall);
+                curTurnBall.myTurn = true;
                 for (Ball ball : playBalls) {
                     ball.collideWithSet.clear();
                 }
-            }
-        }
-
-        if (isAllStop() == true && inputs.buttons[2].IsReleasedNow()) {
-            isRepulsionRequested = true;
-            System.out.println(turn);
-            turn++;
-            curTurnBall.myTurn = false;
-            curTurnBall = playBalls.get(turn % (playBalls.size()));
-            System.out.println(curTurnBall);
-            curTurnBall.myTurn = true;
 //            System.out.println(turn);
-        } else {
-            isPauseRequested = false;
+            } else {
+                isPauseRequested = false;
+            }
+            curBall.image = curTurnBall.image;
         }
-//        isRepulsionRequested = inputs.buttons[2].isPressed;
-
-		/*
+        /*
          * 입력 검증
 		 * 
 		 * -	입력 검증 작업은 코드 구성에 따라 생략할 수 있지만
@@ -316,7 +349,7 @@ public class PhysicsFrame extends GameFrame {
                     int preference = playBalls.get(i).getPreference((j + 1) % 3);
 
                     // 3점 이상 준 경우 호감, 인력 적용
-                    if (preference >= 3) {
+                    if (preference >0&&!playBalls.get(i).collideWithSet.contains(playBalls.get(j).id)) {
                         double displacement_xx = playBalls.get(j).p_x - playBalls.get(i).p_x;// - ball_width / 2;
                         double displacement_yy = playBalls.get(j).p_y - playBalls.get(i).p_y;//- ball_height / 2;
                         double squaredDistance1 = displacement_xx * displacement_xx + displacement_yy * displacement_yy;
@@ -332,7 +365,7 @@ public class PhysicsFrame extends GameFrame {
                         playBalls.get(i).a_y += gravitation1 * displacement_yy / Math.sqrt(squaredDistance1);
                     }
                     // 3점 이하 준 경우 비호감, 척력 적용
-                    else if (preference <= -3) {
+                    else if (preference <0) {
                         double displacement_xx = playBalls.get(j).p_x - playBalls.get(i).p_x;// - ball_width / 2;
                         double displacement_yy = playBalls.get(j).p_y - playBalls.get(i).p_y;//- ball_height / 2;
                         double squaredDistance1 = displacement_xx * displacement_xx + displacement_yy * displacement_yy;
@@ -492,6 +525,8 @@ public class PhysicsFrame extends GameFrame {
             ball.Draw(g);
         }
 
+        curBall.Draw(g);
+
 
         for (int i = 0; i < effectArrayList.size(); i++) {
             if (effectArrayList.get(i).disappearTime < timeStamp) {
@@ -532,4 +567,9 @@ public class PhysicsFrame extends GameFrame {
             this.b2 = b2;
         }
     }
+
+//    int setTurn(int sizeOfList) {
+//        turn
+//        playBalls.
+//    }
 }

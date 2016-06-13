@@ -32,6 +32,7 @@ public class Ball extends DrawableObject {
     public double a_x;
     public double a_y;
     public TreeSet<Integer> collideWithSet = new TreeSet<>();
+    public int collideWith = Integer.MAX_VALUE;
     public int sex;
     public int name;
     public int preference[];
