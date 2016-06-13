@@ -8,6 +8,8 @@ import loot.ImageResourceManager;
 import loot.graphics.DrawableObject;
 import kr.ac.hanyang.values.Constants;
 
+import java.util.*;
+
 /**
  * '공' 하나를 표현하는 클래스입니다.<br>
  * LOOT 라이브러리에 있는 DrawableObject class를 상속받아<br>
@@ -21,19 +23,23 @@ import kr.ac.hanyang.values.Constants;
  * @author Racin
  */
 public class Ball extends DrawableObject {
+    public int id;
+    public static int idx = 0;
     public double p_x;
     public double p_y;
     public double v_x;
     public double v_y;
     public double a_x;
     public double a_y;
-    public int collideWith = Constants.COLLIDE_WITH_INIT;
+    public TreeSet<Integer> collideWithSet = new TreeSet<>();
+    public int collideWith = Integer.MAX_VALUE;
     public int sex;
     public String name;
     public int preference[];
     public int collisionCount;
     public boolean hitMyBall;
     public boolean myTurn;
+    private int matchedWith = 0;
 
     public Ball(int x, int y, ImageResourceManager images) {
         super(x, y, Constants.ball_width, Constants.ball_height, images.GetImage("ball"));
@@ -49,9 +55,11 @@ public class Ball extends DrawableObject {
         super(x, y, Constants.ball_width, Constants.ball_height, images.GetImage(imageName));
         p_x = x;
         p_y = y;
-        this.preference = new int[3];
+        this.preference = new int[6];
         this.myTurn = false;
         this.collisionCount = 0;
+        id = idx;
+        idx++;
     }
 
     @Override
@@ -59,25 +67,21 @@ public class Ball extends DrawableObject {
         return "p_x : " + p_x + "\n" + "p_y : " + p_y + "\n" + "v_x : " + v_x + "\n" + "v_y : " + v_y + "\n" + "a_y : " + a_y + "\n" + "a_y : " + a_y + "\n" + "x : " + x + "\n" + "y : " + y;
     }
 
-    public void setSex(int sex)
-    {
+    public void setSex(int sex) {
         this.sex = sex;
     }
 
-    public int getSex()
-    {
+    public int getSex() {
         return this.sex;
     }
 
-    public void setPreference(int preference[])
-    {
-        for(int i = 0; i < 3; i++) {
+    public void setPreference(int preference[]) {
+        for (int i = 0; i < 3; i++) {
             this.preference[i] = preference[i];
         }
     }
 
-    public int getPreference(int opponentNum)
-    {
+    public int getPreference(int opponentNum) {
         return this.preference[opponentNum];
     }
     
@@ -94,5 +98,17 @@ public class Ball extends DrawableObject {
     {
         return this.name;
     }
-    
+
+    public int getMatchedWith() {
+        return matchedWith;
+    }
+
+    public void setMatchedWith(int matchedWith) {
+        this.matchedWith = matchedWith;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        return id == ((Ball) obj).id;
+    }
 }

@@ -431,7 +431,7 @@ public class PhysicsSampleFrame extends GameFrame {
                 while (isWithinCanvas == false);
 
                 for (int j = i + 1; j < balls.length; j++) {
-                    if (PhysicsUtil.calcCollision(balls[i], balls[j])
+                    if (PhysicsUtil.isCollide(balls[i], balls[j])
 //                            && (balls[i].collideWith != j || balls[j].collideWith != i)) {
                             ) {
 //                        balls[i].collideWith = j;
@@ -440,7 +440,7 @@ public class PhysicsSampleFrame extends GameFrame {
                     }
 
 					//현재 공이 수구이고 내 공과 충돌 시 유효 충돌.
-					if ( PhysicsUtil.calcCollision(balls[0], balls[j]) ) {
+					if ( PhysicsUtil.isCollide(balls[0], balls[j]) ) {
 						balls[j].hitMyBall = true;
 
 					}

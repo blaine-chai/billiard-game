@@ -7,7 +7,7 @@ import kr.ac.hanyang.values.Constants;
  * Created by blainechai on 2016. 6. 12..
  */
 public class PhysicsUtil {
-    public static boolean calcCollision(Ball i, Ball j) {
+    public static boolean isCollide(Ball i, Ball j) {
         double dx = i.p_x - j.p_x;
         double dy = i.p_y - j.p_y;
 

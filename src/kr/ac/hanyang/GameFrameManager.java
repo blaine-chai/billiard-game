@@ -1,7 +1,7 @@
 package kr.ac.hanyang;
 
 import kr.ac.hanyang.frame.MainFrame;
-import kr.ac.hanyang.frame.PhysicsSampleFrame;
+import kr.ac.hanyang.frame.PhysicsFrame;
 import kr.ac.hanyang.frame.VoteFrame;
 import loot.GameFrame;
 import loot.GameFrameSettings;
@@ -11,10 +11,8 @@ import loot.GameFrameSettings;
  */
 public class GameFrameManager {
     private GameFrameSettings settings;
-    int mode = 0;
-//    GameFrame gameFrameWindow;
-    GameFrame window;
-    GameFrame mainFrameWindow;
+    private GameFrame window;
+    private GameFrame preWindow;
 
     public GameFrameManager() {
         this.settings = new GameFrameSettings();
@@ -26,21 +24,16 @@ public class GameFrameManager {
         settings.numberOfButtons = 6;
     }
 
-    public void drawGameFrame() {
-
-
-//			settings.gameLoop_interval_ns = 10000000;		//100FPS에 해당 - 이를 버틸 수 있는 컴퓨터는 그리 많지 않을테니 보통 실제 FPS는 이보다 떨어지게 됨
-
-        //settings.gameLoop_interval_ns = 100000000;	//10FPS에 해당 - 화면이 초당 10번밖에 갱신되지 않으면 버벅거리는게 눈에 보임
-
-
-        window = new PhysicsSampleFrame(settings, this);
+    public void drawGameFrame(int[][] preference) {
+        preWindow = window;
+        window = new PhysicsFrame(settings, this, preference);
         window.setVisible(true);
-        voteFrame();
+//        drawVoteFrame();
     }
 
-    public void endMainFrame() {
-        window.setVisible(false);
+    public void endPrevFrame() {
+        preWindow.setVisible(false);
+        preWindow = null;
     }
 
     public void drawMainFrame() {
@@ -48,13 +41,9 @@ public class GameFrameManager {
         window.setVisible(true);
     }
 
-    public void voteFrame(){
-        this.settings.window_title = "Meeting";
-        this.settings.canvas_width = 300;
-        this.settings.canvas_height = 300;
-        this.settings.gameLoop_interval_ns = 16666666;        //약 60FPS에 해당
-        settings.gameLoop_use_virtualTimingMode = false;
-        mainFrameWindow = new VoteFrame(settings,this);
-        mainFrameWindow.setVisible(true);
+    public void drawVoteFrame() {
+        preWindow = window;
+        window = new VoteFrame(settings, this);
+        window.setVisible(true);
     }
 }
